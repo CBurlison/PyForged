@@ -1,0 +1,14 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+authors = [
+  {name = "Cory Burlison", email = "coryburlison@gmail.com"}
+]
+maintainers = [
+  {name = "Cory Burlison", email = "coryburlison@gmail.com"}
+]
+name = "Forged"
+version = "0.0.0001"
+description = "Forged game"
