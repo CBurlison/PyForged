@@ -48,14 +48,12 @@ class MappedInput:
         return NotImplemented
     
 class InputHandler:
-    __key_events: dict[uuid.UUID, dict[InputTime, list[any]]] = {}
-    __mouse_motion_events: list[any] = []
-
-    __key_time_cache: dict[uuid.UUID, int] = {}
-
-    __input_map: dict[uuid.UUID, MappedInput] = {}
-    
-    mouse_pos: tuple[int, int] = (0, 0)
+    def __init__(self):
+        self.__key_events: dict[uuid.UUID, dict[InputTime, list[any]]] = {}
+        self.__mouse_motion_events: list[any] = []
+        self.__key_time_cache: dict[uuid.UUID, int] = {}
+        self.__input_map: dict[uuid.UUID, MappedInput] = {}
+        self.mouse_pos: tuple[int, int] = (0, 0)
 
     def process_frame_events(self) -> bool:
         new_pos = pygame.mouse.get_rel()
@@ -63,7 +61,8 @@ class InputHandler:
         if not self.mouse_pos == new_pos:
             self.mouse_pos = new_pos
             for ev in self.__mouse_motion_events:
-                ev(new_pos)
+                if ev(new_pos):
+                    break
 
         new_events: list[uuid.UUID] = []
 
@@ -73,30 +72,14 @@ class InputHandler:
                 return False
             elif event.type is not MOUSEMOTION:
                 if event.type == KEYDOWN and event.key in KeyMap.key_map:
-                    for reg_key in self.__key_events:
-                        reg_event = self.__input_map.get(reg_key)
-
-                        if reg_event == event:
-                            count = DictHelper.increment(self.__key_time_cache, reg_key)
-
-                            if count == 1:
-                                new_events.append(reg_event)
-                                self.__process_events(reg_key, InputTime.JustPressed)
+                    self.__process_keydown_event(event, new_events)
 
                 if event.type == KEYUP and event.key in KeyMap.key_map:
-                    for reg_key in self.__key_events:
-                        reg_event = self.__input_map.get(reg_key)
-                        if reg_key in self.__key_time_cache and reg_event.key == event.key:
-
-                            if reg_key in self.__key_time_cache:
-                                self.__key_time_cache.pop(reg_key)
-
-                            self.__process_events(reg_key, InputTime.JustReleased)
+                    self.__process_keyup_event(event)
 
         for cache_key in self.__key_time_cache.keys():
             if cache_key not in new_events:
-                reg_event = self.__input_map.get(cache_key)
-                count = DictHelper.increment(self.__key_time_cache, cache_key)
+                _ = DictHelper.increment(self.__key_time_cache, cache_key)
                 self.__process_events(cache_key, InputTime.Pressed)
 
         return True
@@ -108,6 +91,13 @@ class InputHandler:
     def remove_event(self, input_key: MappedInput, input_time: InputTime, input_event):
         new_id = self.__map_input(input_key)
         DictHelper.remove_list_2(self.__key_events, new_id, input_time, input_event)
+
+    def add_mouse_motion_event(self, input_event):
+        self.__mouse_motion_events.insert(0, input_event)
+
+    def remove_mouse_motion_event(self, input_event):
+        if input_event in self.__mouse_motion_events:
+            self.__mouse_motion_events.pop(input_event)
 
     def __map_input(self, unmapped: MappedInput) -> uuid.UUID:
         for entry in self.__input_map.items():
@@ -132,4 +122,25 @@ class InputHandler:
         for ev in event_list:
             if ev():
                 break
+
+    def __process_keydown_event(self, event, new_events: list[uuid.UUID]):
+        for reg_key in self.__key_events:
+            reg_event = self.__input_map.get(reg_key)
+
+            if reg_event == event:
+                count = DictHelper.increment(self.__key_time_cache, reg_key)
+
+                if count == 1:
+                    new_events.append(reg_event)
+                    self.__process_events(reg_key, InputTime.JustPressed)
+
+    def __process_keyup_event(self, event):
+        for reg_key in self.__key_events:
+            reg_event = self.__input_map.get(reg_key)
+            if reg_key in self.__key_time_cache and reg_event.key == event.key:
+
+                if reg_key in self.__key_time_cache:
+                    self.__key_time_cache.pop(reg_key)
+
+                self.__process_events(reg_key, InputTime.JustReleased)
         

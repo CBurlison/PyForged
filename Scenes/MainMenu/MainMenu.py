@@ -6,10 +6,9 @@ from ForgedTypes.node import Node
 from ForgedTypes.tree import Tree
 
 class MainMenu(Node):
-    first: bool = True
-
     def __init__(self, game_tree: Tree):
         self.game_tree = game_tree
+        self.first: bool = True
         super().__init__()
 
     def process(self, delta: float):

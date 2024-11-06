@@ -9,34 +9,30 @@ class UnregisteredAction(Enum):
     REGISTER = 3
 
 class TypeConstructor:
-    base_type: type = None
-    constructor: dict[str, type] = None
-    keys: list[str] = None
-    classes: list[type] = None
-    is_pydantic: bool = False
-    
     def __init__(self, object_type: type, constructor: dict[str, type]):
-        self.base_type = object_type
+        self.base_type: type = object_type
         
         try:
-            self.classes = list(inspect.getmro(object_type))
+            self.classes: list[type] = list(inspect.getmro(object_type))
         except(AttributeError,TypeError):
-            self.classes = [object_type]
+            self.classes: list[type] = [object_type]
 
         if BaseModel in self.classes and "return" in constructor:
-            self.is_pydantic = True
+            self.is_pydantic: bool = True
             constructor.pop("return")
+        else:
+            self.is_pydantic: bool = False
 
-        self.constructor = constructor
-        self.keys = list(constructor.keys())
+        self.constructor: dict[str, type] = constructor
+        self.keys: list[str] = list(constructor.keys())
 
 class UnregisteredType(Exception): pass
 
 class DIContainer:
-    __type_constructors: dict[type, TypeConstructor] = {}
-    __type_instances: dict[type, any] = {}
-
     def __init__(self, unregistered_action: UnregisteredAction = UnregisteredAction.DEFAULT):
+        self.__type_constructors: dict[type, TypeConstructor] = {}
+        self.__type_instances: dict[type, any] = {}
+
         if unregistered_action == UnregisteredAction.DEFAULT:
             self.__unregistered_action = self.__unregistered_default
         elif unregistered_action == UnregisteredAction.NONE:
