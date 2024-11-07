@@ -6,6 +6,10 @@ from pygame.locals import (
     KEYDOWN,
     KEYUP,
     MOUSEMOTION,
+    K_LEFT,
+    K_RIGHT,
+    K_UP,
+    K_DOWN,
     MOUSEBUTTONDOWN,
     MOUSEBUTTONUP
 )
@@ -24,10 +28,10 @@ class MappedInput:
 
     def __eq__(self, other):
         if isinstance(other, MappedInput):
-            if self.key is not other.key:
+            if self.key != other.key:
                 return False
             
-            if len(self.mods) is not len(other.mods):
+            if len(self.mods) != len(other.mods):
                 return False
             
             for mod in self.mods:
@@ -36,7 +40,7 @@ class MappedInput:
                 
             return True
         elif isinstance(other, pygame.event.Event):
-            if other.key is None or self.key is not other.key:
+            if other.key is None or self.key != other.key:
                 return False
             
             for mod in self.mods:
@@ -51,14 +55,17 @@ class EventHandler:
     def __init__(self):
         self.__key_events: dict[uuid.UUID, dict[InputTime, list[any]]] = {}
         self.__mouse_motion_events: list[any] = []
+        self.__movement_events: list[any] = []
         self.__key_time_cache: dict[uuid.UUID, int] = {}
         self.__input_map: dict[uuid.UUID, MappedInput] = {}
         self.__custom_events: dict[int, list[any]] = {}
 
         self.mouse_pos: tuple[int, int] = (0, 0)
+        self.__movement: tuple[int, int] = None
 
     def process_frame_events(self) -> bool:
         self.__process_mouse_move()
+        self.__process_movement()
 
         new_events: list[uuid.UUID] = []
 
@@ -90,6 +97,13 @@ class EventHandler:
         if input_event in self.__mouse_motion_events:
             self.__mouse_motion_events.pop(input_event)
 
+    def add_movement_event(self, input_event):
+        self.__movement_events.insert(0, input_event)
+
+    def remove_movement_event(self, input_event):
+        if input_event in self.__movement_events:
+            self.__movement_events.pop(input_event)
+
     def __process_mouse_move(self):
         new_pos = pygame.mouse.get_pos()
 
@@ -113,7 +127,7 @@ class EventHandler:
             if event.type == QUIT:
                 pygame.quit()
                 return False
-            else:
+            elif event.type != MOUSEMOTION:
                 self.__parse_event(event, new_events)
 
         return True
@@ -121,7 +135,7 @@ class EventHandler:
     def __parse_event(self, event: pygame.event.Event, new_events: list[uuid.UUID]):
         if event.type > pygame.USEREVENT:
                 self.__process_custom_event(event)
-        elif event.type is not MOUSEMOTION:
+        else:
             if event.type == KEYDOWN and event.key in KeyMap.key_map:
                 self.__process_keydown_event(event, new_events)
             elif event.type == KEYUP and event.key in KeyMap.key_map:
@@ -139,7 +153,7 @@ class EventHandler:
 
             if reg_event == event:
                 count = DictHelper.increment(self.__key_time_cache, reg_key)
-
+                
                 if count == 1:
                     new_events.append(reg_event)
                     self.__process_events(reg_key, InputTime.JustPressed)
@@ -147,8 +161,8 @@ class EventHandler:
     def __process_keyup_event(self, event: pygame.event.Event):
         for reg_key in self.__key_events:
             reg_event = self.__input_map.get(reg_key)
-            if reg_key in self.__key_time_cache and reg_event.key == event.key:
 
+            if reg_key in self.__key_time_cache and reg_event.key == event.key:
                 if reg_key in self.__key_time_cache:
                     self.__key_time_cache.pop(reg_key)
 
@@ -174,4 +188,30 @@ class EventHandler:
         for ev in event_list:
             if ev():
                 break
+
+    def __process_movement(self):
+        if len(self.__movement_events) == 0:
+            return
+
+        x: int = 0
+        y: int = 0
+
+        pressed_keys = pygame.key.get_pressed()
+
+        if pressed_keys[K_UP]:
+            y -= 1
+        if pressed_keys[K_DOWN]:
+            y += 1
+        if pressed_keys[K_LEFT]:
+            x -= 1
+        if pressed_keys[K_RIGHT]:
+            x += 1
+
+        if x == 0 and y == 0:
+            return
+
+        movement = (x, y)
         
+        for ev in self.__movement_events:
+            if ev(movement):
+                break
