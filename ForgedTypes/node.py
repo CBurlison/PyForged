@@ -1,9 +1,21 @@
 from typing_extensions import Self
+from enum import Enum
+import pygame
+
+class MouseInterraction(Enum):
+    Stop = 0
+    Ignore = 1
 
 class Node:
     def __init__(self):
         self.parent: Self = None
         self.children: list[Self] = []
+        self.mouse_interaction: MouseInterraction = MouseInterraction.Stop
+        self.game_tree: Self = None
+        self.screen: pygame.Surface = None
+
+    def setup(self):
+        pass
 
     def process(self, delta: float):
         pass
@@ -26,3 +38,5 @@ class Node:
 
         new_parent.add_child(self)
             
+    def __process_children(self, process_node: Self, delta: float):
+        pass

@@ -1,6 +1,9 @@
 import inspect
 from enum import Enum
 from pydantic import BaseModel
+from ForgedTypes.node import Node
+from ForgedTypes.tree import Tree
+import pygame
 
 class UnregisteredAction(Enum):
     NONE = 0
@@ -12,12 +15,7 @@ class TypeConstructor:
     def __init__(self, object_type: type, constructor: dict[str, type]):
         self.base_type: type = object_type
         
-        try:
-            self.classes: list[type] = list(inspect.getmro(object_type))
-        except(AttributeError,TypeError):
-            self.classes: list[type] = [object_type]
-
-        if BaseModel in self.classes and "return" in constructor:
+        if issubclass(object_type, BaseModel) and "return" in constructor:
             self.is_pydantic: bool = True
             constructor.pop("return")
         else:
@@ -26,7 +24,8 @@ class TypeConstructor:
         self.constructor: dict[str, type] = constructor
         self.keys: list[str] = list(constructor.keys())
 
-class UnregisteredType(Exception): pass
+class UnregisteredType(Exception): 
+    pass
 
 class DIContainer:
     def __init__(self, unregistered_action: UnregisteredAction = UnregisteredAction.DEFAULT):
@@ -77,7 +76,7 @@ class DIContainer:
         all: list[any] = []
 
         for item in self.__type_constructors.values():
-            if object_type in item.classes:
+            if issubclass(item.base_type, object_type):
                 all.append(self.locate(item.base_type, params))
 
         return all
@@ -105,7 +104,13 @@ class DIContainer:
                 key = di_constructor.keys[i]
                 args.append(self.locate(di_constructor.constructor[key]))
 
-        return object_type(*args)
+        ret = object_type(*args)
+        if isinstance(ret, Node):
+            ret.screen = self.locate(pygame.Surface)
+            ret.game_tree = self.locate(Tree)
+            ret.setup()
+        
+        return ret
     
     def __construct_base_model(self, di_constructor: TypeConstructor, object_type: type, params=[]):
         obj = object_type()
