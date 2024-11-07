@@ -15,3 +15,11 @@ class Tree(Node):
             child.process(delta)
             self.__process_children(child, delta)
             
+    def __enter_tree_events(self, new_node: Node):
+        for ev in self.on_enter_tree:
+            ev(new_node)
+
+    def __exit_tree_events(self, removed_node: Node):
+        for ev in self.on_exit_tree:
+            ev(removed_node)
+            

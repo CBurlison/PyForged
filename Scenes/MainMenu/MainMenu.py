@@ -2,27 +2,27 @@ import sys
 sys.path.append("...")
 
 import pygame
-from ForgedTypes.node import Node
+from ForgedTypes.control import Control
+from PythonDI import DIContainer
+from Scenes.MainMenu.flashy_box import FlashyBox
 
-class MainMenu(Node):
-    def __init__(self):
+class MainMenu(Control):
+    def __init__(self, container: DIContainer):
         super().__init__()
-        self.first: bool = True
+        self.container: DIContainer = container
+
+    def setup(self):
+        self.position = (250, 250)
+        self.size = (50, 50)
+
+        box: FlashyBox = self.container.locate(FlashyBox)
+        box.size = (10, 10)
+        box.position = (260, 260)
+
+        self.add_child(box)
 
     def process(self, delta: float):
-        # Draw a solid blue circle in the center
-        #pygame.draw.circle(screen, (0, 0, 255), (250, 250), 75)
-
-        surf = pygame.Surface((50, 50))
+        surf = pygame.Surface(self.size)
         surf.fill((0, 0, 0))
         
-        self.screen.blit(surf, (250, 250))
-
-        if self.first:
-            surf2 = pygame.Surface((10, 10))
-            surf2.fill((255, 255, 255))
-            
-            self.screen.blit(surf2, (260, 260))
-            self.first = False
-        else:
-            self.first = True
+        self.screen.blit(surf, self.position)
