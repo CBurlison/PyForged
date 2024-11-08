@@ -1,23 +1,25 @@
+import typing
+
 def add(mod_dict: dict, key_1, new_value):
     mod_dict[key_1] = new_value
 
-def add_list(mod_dict: dict[any, list[any]], key_1, new_value):
+def add_list(mod_dict: dict[typing.Any, list[typing.Any]], key_1, new_value):
     if key_1 not in mod_dict:
         mod_dict[key_1] = [new_value]
     else:
         mod_dict[key_1].append(new_value)
 
-def remove_list(mod_dict: dict[any, list[any]], key_1, new_value):
+def remove_list(mod_dict: dict[typing.Any, list[typing.Any]], key_1, new_value):
     if key_1 in mod_dict and new_value in mod_dict[key_1]:
         mod_dict[key_1].pop(new_value)
 
-def add_2(mod_dict: dict[any, dict[any, any]], key_1, key_2, new_value):
+def add_2(mod_dict: dict[typing.Any, dict[typing.Any, typing.Any]], key_1, key_2, new_value):
     if key_1 not in mod_dict:
         mod_dict[key_1] = {}
     
     mod_dict[key_1][key_2] = new_value
 
-def remove_2(mod_dict: dict[any, dict[any, any]], key_1, key_2):
+def remove_2(mod_dict: dict[typing.Any, dict[typing.Any, typing.Any]], key_1, key_2):
     if key_1 not in mod_dict:
         mod_dict[key_1] = {}
     
@@ -29,7 +31,7 @@ def remove_2(mod_dict: dict[any, dict[any, any]], key_1, key_2):
     if len(key_items) == 0:
         mod_dict.pop(key_1)
 
-def add_list_2(mod_dict: dict[any, dict[any, list[any]]], key_1, key_2, new_value):
+def add_list_2(mod_dict: dict[typing.Any, dict[typing.Any, list[typing.Any]]], key_1, key_2, new_value):
     if key_1 not in mod_dict:
         mod_dict[key_1] = {}
     
@@ -40,7 +42,7 @@ def add_list_2(mod_dict: dict[any, dict[any, list[any]]], key_1, key_2, new_valu
     else:
         key_items[key_2].append(new_value)
 
-def remove_list_2(mod_dict: dict[any, dict[any, list[any]]], key_1, key_2, new_value):
+def remove_list_2(mod_dict: dict[typing.Any, dict[typing.Any, list[typing.Any]]], key_1, key_2, new_value):
     if key_1 not in mod_dict:
         mod_dict[key_1] = {}
     
@@ -52,13 +54,13 @@ def remove_list_2(mod_dict: dict[any, dict[any, list[any]]], key_1, key_2, new_v
     if len(key_items) == 0:
         mod_dict.pop(key_1)
 
-def insert(mod_dict: dict[any, list[any]], index: int, key_1, new_value):
+def insert(mod_dict: dict[typing.Any, list[typing.Any]], index: int, key_1, new_value):
     if key_1 not in mod_dict:
         mod_dict[key_1] = [new_value]
     else:
         mod_dict[key_1].insert(index, new_value)
 
-def insert_2(mod_dict: dict[any, dict[any, list[any]]], index: int, key_1, key_2, new_value):
+def insert_2(mod_dict: dict[typing.Any, dict[typing.Any, list[typing.Any]]], index: int, key_1, key_2, new_value):
     if key_1 not in mod_dict:
         mod_dict[key_1] = {}
     
@@ -69,7 +71,7 @@ def insert_2(mod_dict: dict[any, dict[any, list[any]]], index: int, key_1, key_2
     else:
         key_items[key_2].insert(index, new_value)
 
-def increment(mod_dict: dict[any, int], key_1, amount: int = 1) -> int:
+def increment(mod_dict: dict[typing.Any, int], key_1, amount: int = 1) -> int:
     if key_1 not in mod_dict:
         mod_dict[key_1] = amount
     else:
@@ -77,7 +79,7 @@ def increment(mod_dict: dict[any, int], key_1, amount: int = 1) -> int:
 
     return mod_dict[key_1]
 
-def increment_2(mod_dict: dict[any, dict[any, int]], key_1, key_2, amount: int = 1) -> int:
+def increment_2(mod_dict: dict[typing.Any, dict[typing.Any, int]], key_1, key_2, amount: int = 1) -> int:
     if key_1 not in mod_dict:
         mod_dict[key_1] = {}
     

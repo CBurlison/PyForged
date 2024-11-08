@@ -1,28 +1,32 @@
 import sys
 sys.path.append("...")
+sys.path.append("....")
 
-from ForgedTypes.control import Control
-from PythonDI import DIContainer
-from Scenes.MainMenu.flashy_box import FlashyBox
-from EventHandler import EventHandler
+from ForgedTypes.Nodes.Controls.control import Control
+from nodeFactory import NodeFactory
+from Scenes.MainMenu.flashyBox import FlashyBox
+from ForgedTypes.Nodes.Controls.label import Label
+from Assets.Fonts.fontInfo import FontInfo
+from eventHandler import InputTime
 
 class MainMenu(Control):
-    def __init__(self, container: DIContainer, event_handler: EventHandler):
+    def __init__(self, node_factory: NodeFactory):
         super().__init__()
         self.speed: int = 100
 
-        self.container: DIContainer = container
-        self.event_handler: EventHandler = event_handler
+        self.node_factory: NodeFactory = node_factory
 
         self.size = (50, 50)
         self.position = (250, 250)
         self.color = (0, 0, 0)
-        self.__delta: float = 0.001
+        self.delta: float = 0.001
 
     def setup(self):
+        super().setup()
+        
         self.update_surface()
 
-        box: FlashyBox = self.container.locate(FlashyBox)
+        box: FlashyBox = self.node_factory.locate_control(FlashyBox)
         box.color = (255, 255, 255)
         box.size = (10, 10)
         box.position = (260, 260)
@@ -30,13 +34,31 @@ class MainMenu(Control):
 
         self.add_child(box)
 
-        self.event_handler.add_movement_event(self.__move_event)
+        label: Label = self.node_factory.locate_control(Label, [FontInfo(bold=True), "Test label"])
+        label.position = (250, 230)
+        
+        label.update_surface()
+        self.add_child(label)
+
+        self.event_handler.add_movement_event(self, self.__move_event)
+        self.event_handler.add_mousebutton_event(self, 1, InputTime.JustPressed, self.__mouse_click_event)
 
     def process(self, delta: float):
-        self.__delta = delta
+        super().process(delta)
+        self.delta = delta
 
-    def exit_tree(self):
-        self.event_handler.remove_movement_event(self.__move_event)
+    def mouse_entered(self):
+        super().mouse_entered()
+
+        self.position = (self.position[0] - 20, self.position[1] - 20)
+        self.size = (self.size[0] + 40, self.size[1] + 40)
+        self.update_surface()
+
+    def mouse_exited(self):
+        super().mouse_exited()
+        self.position = (self.position[0] + 20, self.position[1] + 20)
+        self.size = (self.size[0] - 40, self.size[1] - 40)
+        self.update_surface()
 
     def __move_event(self, movement: tuple[int, int]):
         move = self.__calc_move()
@@ -47,4 +69,9 @@ class MainMenu(Control):
         return True
 
     def __calc_move(self) -> float:
-        return self.__delta * self.speed
+        return self.delta * self.speed
+    
+    def __mouse_click_event(self):
+        if self.mouse_inside:
+            print("Clicked!")
+            return True

@@ -134,5 +134,5 @@ key_map: dict[int, str] = {
 	K_MENU: "Menu",
 	K_POWER: "Power",
 	K_EURO: "Euro",
-	K_AC_BACK: "Android Back Button"
+	K_AC_BACK: "Android Back Button",
 }

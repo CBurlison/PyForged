@@ -1,24 +1,15 @@
-from typing_extensions import Self
-from enum import Enum
 import pygame
-
-class MouseInterraction(Enum):
-    Stop = 0
-    Ignore = 1
+from ForgedTypes.gameState import GameState
 
 class Node:
     def __init__(self):
         # init sets up new variables and does DI stuff. Always call super().__init__().
         self.__new_node: bool = True
-        self.__visible: bool = True
-        self.__process: bool = True
-
-        self.on_enter_tree: list[any] = None
-        self.on_exit_tree: list[any] = None
-
-        self.parent: Self = None
-        self.children: list[Self] = []
-        self.mouse_interaction: MouseInterraction = MouseInterraction.Stop
+        self.visible: bool = True
+        self.run_process: bool = True
+        
+        self.parent: "Node" = None
+        self.children: list["Node"] = []
 
         self.surface: pygame.Surface = None
         self.surface_rect: pygame.Rect = None
@@ -27,8 +18,9 @@ class Node:
         self.color: tuple[int, int, int] = (0, 0, 0)
         
         # set in DI
-        self.game_tree: Self = None
+        self.game_tree: "Node" = None
         self.screen: pygame.Surface = None
+        self.game_state: GameState = None
 
     def setup(self):
         # called in DI after setting things like screen and game_tree.
@@ -46,7 +38,7 @@ class Node:
         # called when finally exiting tree with free()
         pass
 
-    def add_child(self, new_child: Self):
+    def add_child(self, new_child: "Node"):
         # adds a child to this node and calls enter tree events if first time added
         if new_child.parent is not None:
             new_child.parent.remove_child(new_child)
@@ -57,16 +49,16 @@ class Node:
         if new_child.__new_node:
             new_child.__new_node = False
             new_child.enter_tree()
-            new_child.game_tree.__enter_tree_events(self)
+            new_child.game_tree.enter_tree_events(self)
 
-    def remove_child(self, to_remove: Self):
+    def remove_child(self, to_remove: "Node"):
         # removes child from this node
         to_remove.parent = None
 
         if to_remove in self.children:
             _ = self.children.pop(to_remove)
 
-    def reparent(self, new_parent: Self):
+    def reparent(self, new_parent: "Node"):
         # changes the parent of this node to another node
         if self.parent is None:
             raise ValueError("Node must have a parent in order to reparent.")
@@ -80,16 +72,16 @@ class Node:
             self.parent.remove_child(self)
             
         self.exit_tree()
-        self.game_tree.__exit_tree_events(self)
+        self.game_tree.exit_tree_events(self)
 
         for child in self.children:
             child.free()
 
     def set_visible(self, visible: bool = True):
-        self.__visible = visible
+        self.visible = visible
 
     def is_visible(self) -> bool:
-        if not self.__visible:
+        if not self.visible:
             return False
         
         if self.parent is not None:
@@ -98,7 +90,7 @@ class Node:
         return True
 
     def set_process(self, process: bool = True):
-        self.__process = process
+        self.run_process = process
 
     def move(self, amount: tuple[int, int]):
         if self.surface_rect is not None:
@@ -108,7 +100,7 @@ class Node:
         else:
             self.position = (self.position[0] + amount[0], self.position[1] + amount[1])
             
-        self.__move_children(amount)
+        self.move_children(amount)
 
     def update_surface(self):
         self.surface = pygame.Surface(self.size)
@@ -118,7 +110,7 @@ class Node:
         self.surface_rect.x += self.position[0]
         self.surface_rect.y += self.position[1]
         
-    def __move_children(self, amount: tuple[int, int]):
+    def move_children(self, amount: tuple[int, int]):
         for child in self.children:
             if child.surface_rect is not None:
                 child.surface_rect.x += amount[0]
@@ -127,9 +119,9 @@ class Node:
             else:
                 child.position = (child.position[0] + amount[0], child.position[1] + amount[1])
                 
-            child.__move_children(amount)
+            child.move_children(amount)
         
-    def __move_children_to(self, position: tuple[int, int]):
+    def move_children_to(self, position: tuple[int, int]):
         for child in self.children:
             if child.surface_rect is not None:
                 child.surface_rect.move(position)
@@ -137,26 +129,51 @@ class Node:
             else:
                 child.position = position
 
-            child.__move_children_to(position)
+            child.move_children_to(position)
 
-    def __draw(self):
+    def draw(self):
         if self.surface is not None and self.screen is not None:
             self.screen.blit(self.surface, self.position)
 
-        self.__draw_children(self)
+        self.draw_children(self)
         
-    def __draw_children(self, process_node: Self):
+    def draw_children(self, process_node: "Node"):
         for child in process_node.children:
-            if child.__visible:
-                child.__draw()
-                self.__draw_children(child)
+            if child.visible:
+                child.draw()
+                self.draw_children(child)
+    
+    # control methods
+    def mouse_entered(self):
+        pass
+
+    def mouse_exited(self):
+        pass
+
+    def check_mouse_over(self, pos: tuple[int, int]) -> bool:
+        if self.visible:
+            for child in self.children:
+                if child.check_mouse_over(pos):
+                    return True
+                
+        return False
             
     # tree methods
-    def __process_children(self, process_node: Self, delta: float):
+    def process_children(self, process_node: "Node", delta: float):
+        for child in process_node.children:
+            if child.run_process:
+                child.process(delta)
+
+            self.process_children(child, delta)
+
+    def set_screen(self, screen: pygame.Surface):
+        self.screen = screen
+
+        for child in self.children:
+            child.set_screen(screen)
+            
+    def enter_tree_events(self, new_node: "Node"):
         pass
 
-    def __enter_tree_events(self, new_node: Self):
-        pass
-
-    def __exit_tree_events(self, removed_node: Self):
+    def exit_tree_events(self, removed_node: "Node"):
         pass

@@ -1,13 +1,12 @@
 import sys
-
-import Scenes.MainMenu
-import Scenes.MainMenu.MainMenu
-import Scenes.MainMenu.flashy_box
 sys.path.append("..")
 
+import Scenes.MainMenu.mainMenu as mainMenu
+import Scenes.MainMenu.flashyBox as flashyBox
+import ForgedTypes.Nodes.Controls.label as label
 from PythonDI import DIContainer
-import Scenes
 
 def register_nodes(di_container: DIContainer):
-    di_container.register(Scenes.MainMenu.MainMenu.MainMenu)
-    di_container.register(Scenes.MainMenu.flashy_box.FlashyBox)
+    di_container.register(mainMenu.MainMenu)
+    di_container.register(flashyBox.FlashyBox)
+    di_container.register(label.Label)

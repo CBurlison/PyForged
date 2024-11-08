@@ -1,7 +1,7 @@
 import sys
 sys.path.append("...")
 
-from ForgedTypes.control import Control
+from ForgedTypes.Nodes.Controls.control import Control, MouseInterraction
 
 class FlashyBox(Control):
     def __init__(self):
@@ -13,9 +13,14 @@ class FlashyBox(Control):
         self.flash_time: float = 2.0
 
     def setup(self):
+        super().setup()
+
+        self.mouse_interaction = MouseInterraction.Ignore
         self.update_surface()
 
     def process(self, delta: float):
+        super().process(delta)
+
         self.timer += delta
 
         if self.timer >= self.flash_time:
