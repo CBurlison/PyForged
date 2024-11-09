@@ -16,6 +16,7 @@ class Node:
         self.size: tuple[int, int] = (0, 0)
         self.position: tuple[int, int] = (0, 0)
         self.color: tuple[int, int, int] = (0, 0, 0)
+        self.scale: float = 1.0
         
         # set in DI
         self.game_tree: "Node" = None
@@ -102,14 +103,6 @@ class Node:
             
         self.move_children(amount)
 
-    def update_surface(self):
-        self.surface = pygame.Surface(self.size)
-        self.surface.fill(self.color)
-
-        self.surface_rect = self.surface.get_rect()
-        self.surface_rect.x += self.position[0]
-        self.surface_rect.y += self.position[1]
-        
     def move_children(self, amount: tuple[int, int]):
         for child in self.children:
             if child.surface_rect is not None:
@@ -121,16 +114,44 @@ class Node:
                 
             child.move_children(amount)
         
+    def move_to(self, position: tuple[int, int]):
+        if self.surface_rect is not None:
+            self.surface_rect.x = position[0]
+            self.surface_rect.y = position[1]
+            self.position = (self.surface_rect.x, self.surface_rect.y)
+        else:
+            self.position = position
+            
+        self.move_children_to(position)
+
     def move_children_to(self, position: tuple[int, int]):
         for child in self.children:
             if child.surface_rect is not None:
-                child.surface_rect.move(position)
+                child.surface_rect.x = position[0]
+                child.surface_rect.y = position[1]
                 child.position = (child.surface_rect.x, child.surface_rect.y)
             else:
                 child.position = position
 
             child.move_children_to(position)
 
+    def update_surface(self, force: bool = False):
+        if force or (self.surface is None or self.surface.get_size() != self.size):
+            self.surface = pygame.Surface(self.size)
+
+        if self.color is not None:
+            self.surface.fill(self.color)
+
+        if self.scale != 1.0:
+            self.surface = pygame.transform.scale(self.surface, (self.size[0] * self.scale, self.size[1] * self.scale))
+
+        self.set_rect()
+
+    def set_rect(self):
+        self.surface_rect = self.surface.get_rect()
+        self.surface_rect.x = self.position[0]
+        self.surface_rect.y = self.position[1]
+        
     def draw(self):
         if self.surface is not None and self.screen is not None:
             self.screen.blit(self.surface, self.position)

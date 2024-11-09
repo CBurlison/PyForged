@@ -271,7 +271,7 @@ class EventHandler:
                 _ = DictHelper.increment(self.__mouse_time_cache, cache_key)
                 self.__process_mouseclick_events(self.__mouse_button_events, cache_key, InputTime.Pressed)
 
-    def __process_events(self, collection: dict[uuid.UUID, dict[InputTime, list[KeyPresskEvent]]], input_key, input_time: InputTime):
+    def __process_events(self, collection: dict[uuid.UUID, dict[InputTime, list[KeyPresskEvent]]], input_key: uuid.UUID, input_time: InputTime):
         if input_key not in collection:
             return
         
@@ -286,7 +286,7 @@ class EventHandler:
             if ev.press_event():
                 break
 
-    def __process_mouseclick_events(self, collection: dict[int, dict[InputTime, list[MouseClickEvent]]], input_key, input_time: InputTime):
+    def __process_mouseclick_events(self, collection: dict[int, dict[InputTime, list[MouseClickEvent]]], input_key: int, input_time: InputTime):
         if input_key not in collection:
             return
         

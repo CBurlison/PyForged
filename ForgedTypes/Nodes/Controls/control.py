@@ -6,9 +6,9 @@ from eventHandler import EventHandler
 from enum import Enum
 import typing
 from eventHandler import (
-    MouseClickEvent, 
-    MouseMoveEvent, 
-    KeyPresskEvent, 
+    MouseClickEvent,
+    MouseMoveEvent,
+    KeyPresskEvent,
     MovementEvent,
     CustomEvent
 )
