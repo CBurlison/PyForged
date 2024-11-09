@@ -24,8 +24,6 @@ class AnimatedSprite(Control):
         self.animation: str = ""
         self.animations: dict[str, Animation] = {}
 
-        self.color = None
-
     def set_animation(self, animation: str):
         if animation not in self.animations:
             return
@@ -113,3 +111,4 @@ class AnimatedSprite(Control):
         self.__current_frame = self.__current_animation.frames[frame]
         self.update_surface(True)
         self.surface.blit(self.__current_frame.frame, (0, 0))
+        self.surface.set_colorkey(self.color)

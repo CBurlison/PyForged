@@ -10,7 +10,6 @@ def create_frame(img: pygame.Surface, color: tuple[int, int, int] = BLACK, frame
 
     frame = pygame.Surface((width, height)).convert_alpha()
     frame.blit(img, (0, 0))
-    #frame = pygame.transform.scale(frame, (width * scale, height * scale))
     frame.set_colorkey(color)
 
     return AnimationFrame(frame, frame_duration)
