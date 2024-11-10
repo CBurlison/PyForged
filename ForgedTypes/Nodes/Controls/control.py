@@ -79,11 +79,11 @@ class Control(Node):
     def setup(self):
         super().setup()
 
-    def mouse_entered(self):
+    def run_mouse_entered_events(self):
         for ev in self.mouse_entered_events:
             ev()
 
-    def mouse_exited(self):
+    def run_mouse_exited_events(self):
         for ev in self.mouse_exited_events:
             ev()
 
@@ -92,6 +92,7 @@ class Control(Node):
             if self.rect is not None and self.rect.collidepoint(pos):
                 if not self.mouse_inside:
                     self.mouse_inside = True
+                    self.run_mouse_entered_events()
                     self.mouse_entered()
 
                 return True
@@ -109,6 +110,9 @@ class Control(Node):
         return False
     
     def free(self):
+        if self.freed:
+            return
+
         for ev in self.mouse_click_event_storage:
             self.event_handler.remove_mousebutton_event(ev)
 
@@ -134,6 +138,7 @@ class Control(Node):
         
     def __mouse_exited(self):
         self.mouse_inside = False
+        self.run_mouse_exited_events()
         self.mouse_exited()
 
     def __anchor_top_left(self) -> tuple[int, int]:

@@ -12,6 +12,10 @@ from Data.animationStore import AnimationStore
 from ForgedTypes.Nodes.Controls.animatedSprite import AnimatedSprite, SizeMode
 from ForgedTypes.Nodes.Controls.control import AnchorPoint
 
+def loop_10_free(anim: AnimatedSprite):
+    if anim.loop_count == 2:
+        anim.queue_free()
+
 def main():
     pygame.init()
     pygame.font.init()
@@ -58,6 +62,8 @@ def main():
     anim.update_surface()
     game_tree.add_child(anim)
     anim.play_animation("idle")
+    anim.animation_loop_events.append(loop_10_free)
+    anim = None
 
     anim2: AnimatedSprite = node_factory.locate_control(AnimatedSprite)
     anim2.position = (700, 500)
@@ -68,6 +74,7 @@ def main():
     anim2.update_surface()
     game_tree.add_child(anim2)
     anim2.play_animation("idle")
+    anim2 = None
 
     fps_label: FpsCounter = node_factory.locate_control(FpsCounter)
     fps_label.position = (SCREEN_WIDTH/2, 60)
@@ -83,7 +90,7 @@ def main():
     animation_store = None
     node_factory = None
 
-    # Run until the user asks to quit
+    # Main game loop
     while True:
         frame_ticks = game_clock.get_time()
 
@@ -91,6 +98,7 @@ def main():
         if frame_ticks > 0:
             delta = frame_ticks / 1000.0
 
+        game_data.delta = delta
         game_tree.screen.fill((128, 128, 128))
 
         if not event_handler.process_frame_events():
@@ -98,6 +106,8 @@ def main():
        
         game_tree.process_children(game_tree, delta)
         game_tree.check_mouse_over(event_handler.mouse_pos)
+
+        game_tree.run_queue_events()
 
         game_tree.draw()
 

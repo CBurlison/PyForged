@@ -133,7 +133,7 @@ class EventHandler:
 
     def remove_mouse_motion_event(self, input_event: MouseMoveEvent):
         if input_event in self.__mouse_motion_events:
-            self.__mouse_motion_events.pop(input_event)
+            self.__mouse_motion_events.remove(input_event)
 
     # movement events
     def add_movement_event(self, control, input_event) -> MovementEvent:
@@ -144,7 +144,7 @@ class EventHandler:
 
     def remove_movement_event(self, input_event: MovementEvent):
         if input_event in self.__movement_events:
-            self.__movement_events.pop(input_event)
+            self.__movement_events.remove(input_event)
 
     # mouse button events
     def add_mousebutton_event(self, control, input_key: int, input_time: InputTime, input_event) -> MouseClickEvent:
@@ -218,7 +218,7 @@ class EventHandler:
     def __process_custom_event(self, event: pygame.event.Event):
         if event.type in self.__custom_events:
             for ev in self.__custom_events[event.type]:
-                if ev.custom_event(event):
+                if not ev.control.freed and ev.custom_event(event):
                     break
 
     def __process_keydown_event(self, event: pygame.event.Event, new_events: list[uuid.UUID]):
@@ -289,7 +289,7 @@ class EventHandler:
         event_list = events_by_time[input_time]
 
         for ev in event_list:
-            if ev.press_event():
+            if not ev.control.freed and ev.press_event():
                 break
 
     def __process_mouseclick_events(self, collection: dict[int, dict[InputTime, list[MouseClickEvent]]], input_key: int, input_time: InputTime):
@@ -304,9 +304,8 @@ class EventHandler:
         event_list = events_by_time[input_time]
 
         for ev in event_list:
-            if ev.control.mouse_inside:
-                if ev.click_event():
-                    break
+            if not ev.control.freed and ev.control.mouse_inside and ev.click_event():
+                break
 
     def __process_movement(self):
         if len(self.__movement_events) == 0:
@@ -332,5 +331,5 @@ class EventHandler:
         movement = (x, y)
         
         for ev in self.__movement_events:
-            if ev.move_event(movement):
+            if not ev.control.freed and ev.move_event(movement):
                 break

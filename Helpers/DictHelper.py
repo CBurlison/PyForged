@@ -11,7 +11,7 @@ def add_list(mod_dict: dict[typing.Any, list[typing.Any]], key_1, new_value):
 
 def remove_list(mod_dict: dict[typing.Any, list[typing.Any]], key_1, new_value):
     if key_1 in mod_dict and new_value in mod_dict[key_1]:
-        mod_dict[key_1].pop(new_value)
+        mod_dict[key_1].remove(new_value)
 
 def add_2(mod_dict: dict[typing.Any, dict[typing.Any, typing.Any]], key_1, key_2, new_value):
     if key_1 not in mod_dict:
@@ -49,7 +49,7 @@ def remove_list_2(mod_dict: dict[typing.Any, dict[typing.Any, list[typing.Any]]]
     key_items = mod_dict[key_1]
 
     if key_2 in key_items and new_value in key_items[key_2]:
-        key_items[key_2].pop(new_value)
+        key_items[key_2].remove(new_value)
 
     if len(key_items) == 0:
         mod_dict.pop(key_1)
