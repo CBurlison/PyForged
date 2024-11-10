@@ -15,6 +15,6 @@ class Label(Control):
         new_font = font.SysFont(self.font_info.font, self.font_info.size, self.font_info.bold, self.font_info.italic)
         self.surface = new_font.render(self.text, False, self.font_info.color)
         
-        self.surface_rect = self.surface.get_rect()
-        self.surface_rect.x += self.position[0]
-        self.surface_rect.y += self.position[1]
+        self.rect = self.surface.get_rect()
+        self.rect.x += self.position[0]
+        self.rect.y += self.position[1]

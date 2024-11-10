@@ -8,16 +8,13 @@ from Scenes.MainMenu.flashyBox import FlashyBox
 from ForgedTypes.Nodes.Controls.label import Label
 from Assets.Fonts.fontInfo import FontInfo
 from eventHandler import InputTime
-from ForgedTypes.Nodes.Controls.animatedSprite import AnimatedSprite
-from Data.animationStore import AnimationStore
 
 class MainMenu(Control):
-    def __init__(self, node_factory: NodeFactory, animation_store: AnimationStore):
+    def __init__(self, node_factory: NodeFactory):
         super().__init__()
         self.speed: int = 100
 
         self.node_factory: NodeFactory = node_factory
-        self.animation_store: AnimationStore = animation_store
 
         self.size = (50, 50)
         self.position = (250, 250)
@@ -42,16 +39,6 @@ class MainMenu(Control):
         
         label.update_surface()
         self.add_child(label)
-
-        anim: AnimatedSprite = self.node_factory.locate_control(AnimatedSprite)
-        anim.position = (500, 500)
-        anim.size = (512, 512)
-        anim.animations["idle"] = self.animation_store.animations["Human_Idle"]
-
-        anim.update_surface()
-        self.add_child(anim)
-
-        anim.play_animation("idle")
 
         self.event_handler.add_movement_event(self, self.__move_event)
         self.event_handler.add_mousebutton_event(self, 1, InputTime.JustPressed, self.__mouse_click_event)

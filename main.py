@@ -5,9 +5,12 @@ from ForgedTypes.Nodes.tree import Tree
 from ForgedTypes.gameState import GameState
 from Helpers import DIHelper
 from Scenes.MainMenu.mainMenu import MainMenu
+from Scenes.FpsCounter.fpsCounter import FpsCounter
 from nodeFactory import NodeFactory
 from Data.imageStore import ImageStore
 from Data.animationStore import AnimationStore
+from ForgedTypes.Nodes.Controls.animatedSprite import AnimatedSprite, SizeMode
+from ForgedTypes.Nodes.Controls.control import AnchorPoint
 
 def main():
     pygame.init()
@@ -18,7 +21,7 @@ def main():
     
     game_clock = pygame.time.Clock()
     game_clock.tick(60)
-
+    
     di_container = DIContainer()
     di_container.register_instance(DIContainer, di_container)
 
@@ -37,7 +40,7 @@ def main():
     di_container.register_instance(pygame.Surface, pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)))
     di_container.register_instance(ImageStore, ImageStore())
     di_container.register_instance(AnimationStore)
-    _ = di_container.locate(AnimationStore)
+    animation_store: AnimationStore = di_container.locate(AnimationStore)
     
     game_tree = node_factory.locate_node(Tree)
     di_container.register_instance(Tree, game_tree)
@@ -46,10 +49,39 @@ def main():
     game_tree.add_child(node_factory.locate_control(MainMenu))
     game_data: GameState = di_container.locate(GameState)
 
+    anim: AnimatedSprite = node_factory.locate_control(AnimatedSprite)
+    anim.position = (500, 500)
+    anim.size_mode = SizeMode.Sprite
+    anim.scale = 0.5
+    anim.animations["idle"] = animation_store.animations["Human_Idle"]
+    anim.anchor_point = AnchorPoint.TopCenter
+    anim.update_surface()
+    game_tree.add_child(anim)
+    anim.play_animation("idle")
+
+    anim2: AnimatedSprite = node_factory.locate_control(AnimatedSprite)
+    anim2.position = (700, 500)
+    anim2.size = (128, 128)
+    anim2.size_mode = SizeMode.Size
+    anim2.animations["idle"] = animation_store.animations["Human_Idle"]
+    anim2.anchor_point = AnchorPoint.BottomCenter
+    anim2.update_surface()
+    game_tree.add_child(anim2)
+    anim2.play_animation("idle")
+
+    fps_label: FpsCounter = node_factory.locate_control(FpsCounter)
+    fps_label.position = (SCREEN_WIDTH/2, 60)
+    fps_label.size = (SCREEN_WIDTH, 60)
+    
+    fps_label.update_surface()
+    game_tree.add_child(fps_label)
     
     game_tree.screen.fill((128, 128, 128))
     pygame.display.flip()
     game_clock.tick(game_data.FPS)
+
+    animation_store = None
+    node_factory = None
 
     # Run until the user asks to quit
     while True:

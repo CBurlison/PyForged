@@ -12,7 +12,7 @@ class Node:
         self.children: list["Node"] = []
 
         self.surface: pygame.Surface = None
-        self.surface_rect: pygame.Rect = None
+        self.rect: pygame.Rect = None
         self.size: tuple[int, int] = (0, 0)
         self.position: tuple[int, int] = (0, 0)
         self.color: tuple[int, int, int] = (0, 0, 0)
@@ -94,10 +94,10 @@ class Node:
         self.run_process = process
 
     def move(self, amount: tuple[int, int]):
-        if self.surface_rect is not None:
-            self.surface_rect.x += amount[0]
-            self.surface_rect.y += amount[1]
-            self.position = (self.surface_rect.x, self.surface_rect.y)
+        if self.rect is not None:
+            self.rect.x += amount[0]
+            self.rect.y += amount[1]
+            self.position = (self.rect.x, self.rect.y)
         else:
             self.position = (self.position[0] + amount[0], self.position[1] + amount[1])
             
@@ -105,20 +105,20 @@ class Node:
 
     def move_children(self, amount: tuple[int, int]):
         for child in self.children:
-            if child.surface_rect is not None:
-                child.surface_rect.x += amount[0]
-                child.surface_rect.y += amount[1]
-                child.position = (child.surface_rect.x, child.surface_rect.y)
+            if child.rect is not None:
+                child.rect.x += amount[0]
+                child.rect.y += amount[1]
+                child.position = (child.rect.x, child.rect.y)
             else:
                 child.position = (child.position[0] + amount[0], child.position[1] + amount[1])
                 
             child.move_children(amount)
         
     def move_to(self, position: tuple[int, int]):
-        if self.surface_rect is not None:
-            self.surface_rect.x = position[0]
-            self.surface_rect.y = position[1]
-            self.position = (self.surface_rect.x, self.surface_rect.y)
+        if self.rect is not None:
+            self.rect.x = position[0]
+            self.rect.y = position[1]
+            self.position = (self.rect.x, self.rect.y)
         else:
             self.position = position
             
@@ -126,10 +126,10 @@ class Node:
 
     def move_children_to(self, position: tuple[int, int]):
         for child in self.children:
-            if child.surface_rect is not None:
-                child.surface_rect.x = position[0]
-                child.surface_rect.y = position[1]
-                child.position = (child.surface_rect.x, child.surface_rect.y)
+            if child.rect is not None:
+                child.rect.x = position[0]
+                child.rect.y = position[1]
+                child.position = (child.rect.x, child.rect.y)
             else:
                 child.position = position
 
@@ -148,9 +148,9 @@ class Node:
         self.set_rect()
 
     def set_rect(self):
-        self.surface_rect = self.surface.get_rect()
-        self.surface_rect.x = self.position[0]
-        self.surface_rect.y = self.position[1]
+        self.rect = self.surface.get_rect()
+        self.rect.x = self.position[0]
+        self.rect.y = self.position[1]
         
     def draw(self):
         if self.surface is not None and self.screen is not None:

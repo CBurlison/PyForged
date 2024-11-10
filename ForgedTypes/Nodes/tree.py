@@ -11,7 +11,7 @@ class Tree(Node):
         super().setup()
     
         self.surface = self.screen
-        self.surface_rect = self.screen.get_rect()
+        self.rect = self.screen.get_rect()
     
 
     def enter_tree_events(self, new_node: Node):
