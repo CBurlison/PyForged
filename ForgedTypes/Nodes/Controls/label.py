@@ -6,15 +6,23 @@ from ForgedTypes.Nodes.Controls.control import Control
 from Assets.Fonts.fontInfo import FontInfo
 
 class Label(Control):
-    def __init__(self, font_info: FontInfo, text: str):
+    def __init__(self, new_font: FontInfo, text: str):
         super().__init__()
-        self.font_info = font_info
+        self.__font_info = new_font
+        self.__font = font.SysFont(new_font.font, new_font.size, new_font.bold, new_font.italic)
+
         self.text = text
 
+    @property
+    def font_info(self) -> FontInfo:
+        return self.__font_info
+    
+    @font_info.setter
+    def font_info(self, new_font: FontInfo):
+        self.__font_info = new_font
+        self.__font = font.SysFont(new_font.font, new_font.size, new_font.bold, new_font.italic)
+
     def update_surface(self):
-        new_font = font.SysFont(self.font_info.font, self.font_info.size, self.font_info.bold, self.font_info.italic)
-        self.surface = new_font.render(self.text, False, self.font_info.color)
+        self.surface = self.__font.render(self.text, False, self.font_info.color)
         
-        self.rect = self.surface.get_rect()
-        self.rect.x += self.position[0]
-        self.rect.y += self.position[1]
+        self.set_rect()

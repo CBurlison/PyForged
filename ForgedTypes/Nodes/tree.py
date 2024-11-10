@@ -25,8 +25,9 @@ class Tree(Node):
             ev(removed_node)
 
     def run_queue_events(self):
-        for ev in self.event_queue:
+        queue = self.event_queue
+        self.event_queue = []
+
+        for ev in queue:
             if ev.caller is None or ev.caller.is_valid():
                 ev.event()
-
-        self.event_queue.clear()

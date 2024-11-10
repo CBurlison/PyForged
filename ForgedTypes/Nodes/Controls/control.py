@@ -141,6 +141,9 @@ class Control(Node):
         self.run_mouse_exited_events()
         self.mouse_exited()
 
+    ################################################################################################
+    #   Anchor methods
+    ################################################################################################
     def __anchor_top_left(self) -> tuple[int, int]:
         return self.position
 
