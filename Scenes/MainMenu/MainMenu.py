@@ -3,7 +3,7 @@ sys.path.append("...")
 sys.path.append("....")
 
 from ForgedTypes.Nodes.Controls.control import Control
-from nodeFactory import NodeFactory
+from Factories.nodeFactory import NodeFactory
 from Scenes.MainMenu.flashyBox import FlashyBox
 from ForgedTypes.Nodes.Controls.label import Label
 from Assets.Fonts.fontInfo import FontInfo

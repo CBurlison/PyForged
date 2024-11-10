@@ -6,7 +6,7 @@ from ForgedTypes.gameState import GameState
 from Helpers import DIHelper
 from Scenes.MainMenu.mainMenu import MainMenu
 from Scenes.FpsCounter.fpsCounter import FpsCounter
-from nodeFactory import NodeFactory
+from Factories.nodeFactory import NodeFactory
 from Data.imageStore import ImageStore
 from Data.animationStore import AnimationStore
 from ForgedTypes.Nodes.Controls.animatedSprite import AnimatedSprite, SizeMode
