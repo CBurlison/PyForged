@@ -206,11 +206,11 @@ class EventHandler:
         if event.type > pygame.USEREVENT:
                 self.__process_custom_event(event)
         else:
-            if event.type == KEYDOWN and event.key in KeyMap.key_map:
+            if event.type == KEYDOWN:
                 self.__process_keydown_event(event, new_events)
-            elif event.type == KEYUP and event.key in KeyMap.key_map:
+            elif event.type == KEYUP:
                 self.__process_keyup_event(event)
-            if event.type == MOUSEBUTTONDOWN:
+            elif event.type == MOUSEBUTTONDOWN:
                 self.__process_mousebuttondown_event(event, new_mouse_events)
             elif event.type == MOUSEBUTTONUP:
                 self.__process_mousebuttonup_event(event)
@@ -222,6 +222,9 @@ class EventHandler:
                     break
 
     def __process_keydown_event(self, event: pygame.event.Event, new_events: list[uuid.UUID]):
+        if event.key not in KeyMap.key_map:
+            return
+
         for reg_key in self.__key_events:
             reg_event = self.__input_map.get(reg_key)
 
@@ -233,6 +236,9 @@ class EventHandler:
                     self.__process_events(self.__key_events, reg_key, InputTime.JustPressed)
 
     def __process_keyup_event(self, event: pygame.event.Event):
+        if event.key not in KeyMap.key_map:
+            return
+
         for reg_key in self.__key_events:
             reg_event = self.__input_map.get(reg_key)
 

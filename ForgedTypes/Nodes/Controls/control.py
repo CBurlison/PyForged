@@ -2,7 +2,6 @@ import sys
 sys.path.append("...")
 
 import typing
-import pygame
 
 from ForgedTypes.Nodes.node import Node
 from eventHandler import EventHandler
@@ -34,7 +33,8 @@ class Control(Node):
     def __init__(self):
         super().__init__()
 
-        self.anchor_point: AnchorPoint = AnchorPoint.TopLeft
+        self.__anchor_point: AnchorPoint = AnchorPoint.TopLeft
+        self.__calc_anchor_point = self.__anchor_top_left
 
         self.mouse_entered_events: list[typing.Any] = []
         self.mouse_exited_events: list[typing.Any] = []
@@ -48,6 +48,33 @@ class Control(Node):
         self.event_handler: EventHandler
         self.mouse_interaction: MouseInterraction = MouseInterraction.Stop
         self.mouse_inside: bool = False
+
+    @property
+    def anchor_point(self) -> AnchorPoint:
+        return self.__anchor_point
+
+    @anchor_point.setter
+    def anchor_point(self, new_anchor: AnchorPoint):
+        self.__anchor_point = new_anchor
+
+        if new_anchor == AnchorPoint.TopLeft:
+            self.__calc_anchor_point = self.__anchor_top_left
+        elif new_anchor == AnchorPoint.TopCenter:
+            self.__calc_anchor_point = self.__anchor_top_center
+        elif new_anchor == AnchorPoint.TopRight:
+            self.__calc_anchor_point = self.__anchor_top_right
+        elif new_anchor == AnchorPoint.LeftCenter:
+            self.__calc_anchor_point = self.__anchor_left_center
+        elif new_anchor == AnchorPoint.Center:
+            self.__calc_anchor_point = self.__anchor_center
+        elif new_anchor == AnchorPoint.RightCenter:
+            self.__calc_anchor_point = self.__anchor_right_center
+        elif new_anchor == AnchorPoint.BottomLeft:
+            self.__calc_anchor_point = self.__anchor_bottom_left
+        elif new_anchor == AnchorPoint.BottomCenter:
+            self.__calc_anchor_point = self.__anchor_bottom_center
+        elif new_anchor == AnchorPoint.BottomRight:
+            self.__calc_anchor_point = self.__anchor_bottom_right
 
     def setup(self):
         super().setup()
@@ -101,7 +128,7 @@ class Control(Node):
     
     def draw(self):
         if self.surface is not None and self.screen is not None:
-            self.screen.blit(self.surface, self.__calc_anchor_position())
+            self.screen.blit(self.surface, self.__calc_anchor_point())
 
         self.draw_children(self)
         
@@ -109,43 +136,53 @@ class Control(Node):
         self.mouse_inside = False
         self.mouse_exited()
 
-    def __calc_anchor_position(self) -> tuple[int, int]:
-        if self.anchor_point == AnchorPoint.TopLeft:
-            return self.position
-        elif self.anchor_point == AnchorPoint.TopCenter:
-            adj_x = self.position[0]
-            if self.rect.w > 0:
-                adj_x -= int(self.rect.w / 2)
-            return (adj_x, self.position[1])
-        elif self.anchor_point == AnchorPoint.TopRight:
-            return (self.position[0] - self.rect.w, self.position[1])
-        elif self.anchor_point == AnchorPoint.LeftCenter:
-            adj_y = self.position[1]
-            if self.rect.h > 0:
-                adj_y -= int(self.rect.h / 2)
-            return (self.position[0], adj_y)
-        elif self.anchor_point == AnchorPoint.Center:
-            adj_x = self.position[0]
-            if self.rect.w > 0:
-                adj_x -= int(self.rect.w / 2)
+    def __anchor_top_left(self) -> tuple[int, int]:
+        return self.position
 
-            adj_y = self.position[1]
-            if self.rect.h > 0:
-                adj_y -= int(self.rect.h / 2)
+    def __anchor_top_center(self) -> tuple[int, int]:
+        adj_x = self.position[0]
+        if self.rect.w > 0:
+            adj_x -= int(self.rect.w / 2)
+        return (adj_x, self.position[1])
 
-            return (adj_x, adj_y)
-        elif self.anchor_point == AnchorPoint.RightCenter:
-            adj_y = self.position[1]
-            if self.rect.h > 0:
-                adj_y -= int(self.rect.h / 2)
+    def __anchor_top_right(self) -> tuple[int, int]:
+        adj_x = self.position[0]
+        if self.rect.w > 0:
+            adj_x -= int(self.rect.w / 2)
+        return (self.position[0] - self.rect.w, self.position[1])
 
-            return (self.position[0] - self.rect.w, adj_y)
-        elif self.anchor_point == AnchorPoint.BottomLeft:
-            return (self.position[0], self.position[1] - self.rect.h)
-        elif self.anchor_point == AnchorPoint.BottomCenter:
-            adj_x = self.position[0]
-            if self.rect.w > 0:
-                adj_x -= int(self.rect.w / 2)
-            return (adj_x, self.position[1] - self.rect.h)
-        elif self.anchor_point == AnchorPoint.BottomRight:
-            return (self.position[0] - self.rect.w, self.position[1] - self.rect.h)
+    def __anchor_left_center(self) -> tuple[int, int]:
+        adj_y = self.position[1]
+        if self.rect.h > 0:
+            adj_y -= int(self.rect.h / 2)
+        return (self.position[0], adj_y)
+
+    def __anchor_center(self) -> tuple[int, int]:
+        adj_x = self.position[0]
+        if self.rect.w > 0:
+            adj_x -= int(self.rect.w / 2)
+
+        adj_y = self.position[1]
+        if self.rect.h > 0:
+            adj_y -= int(self.rect.h / 2)
+
+        return (adj_x, adj_y)
+
+    def __anchor_right_center(self) -> tuple[int, int]:
+        adj_y = self.position[1]
+        if self.rect.h > 0:
+            adj_y -= int(self.rect.h / 2)
+
+        return (self.position[0] - self.rect.w, adj_y)
+
+    def __anchor_bottom_left(self) -> tuple[int, int]:
+        return (self.position[0], self.position[1] - self.rect.h)
+
+    def __anchor_bottom_center(self) -> tuple[int, int]:
+        adj_x = self.position[0]
+        if self.rect.w > 0:
+            adj_x -= int(self.rect.w / 2)
+        return (adj_x, self.position[1] - self.rect.h)
+
+    def __anchor_bottom_right(self) -> tuple[int, int]:
+        return (self.position[0] - self.rect.w, self.position[1] - self.rect.h)
