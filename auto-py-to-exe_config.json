@@ -1,0 +1,125 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "F:\\Projects\\Python\\PyForged\\main.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": false
+  },
+  {
+   "optionDest": "console",
+   "value": false
+  },
+  {
+   "optionDest": "name",
+   "value": "Forged"
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "disable_windowed_traceback",
+   "value": false
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": false
+  },
+  {
+   "optionDest": "argv_emulation",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/Assets;Assets/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/Assets/Fonts;Fonts/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/Assets/Sprites;Sprites/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/Data;Data/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/Factories;Factories/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/ForgedTypes;ForgedTypes/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/ForgedTypes/Animation;Animation/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/ForgedTypes/Models;Models/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/ForgedTypes/Nodes;Nodes/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/ForgedTypes/Nodes/Controls;Controls/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/Helpers;Helpers/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/Scenes;Scenes/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/Scenes/FpsCounter;FpsCounter/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/Scenes/MainMenu;MainMenu/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/eventHandler.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "F:/Projects/Python/PyForged/PythonDI.py;."
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}

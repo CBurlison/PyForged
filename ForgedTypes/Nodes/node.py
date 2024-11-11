@@ -6,7 +6,7 @@ class Node:
     def __init__(self):
         """__init__ sets up new variables and does DI stuff. Always call super().__init__(), including any objects that are required by said super."""
         self.freed: bool = False
-        self.__new_node: bool = True
+        self.is_new_node: bool = True
         self.visible: bool = True
         self.run_process: bool = True
         
@@ -48,8 +48,8 @@ class Node:
         new_child.parent = self
         self.children.append(new_child)
 
-        if new_child.__new_node:
-            new_child.__new_node = False
+        if new_child.is_new_node:
+            new_child.is_new_node = False
             new_child.enter_tree()
             new_child.game_tree.enter_tree_events(self)
 

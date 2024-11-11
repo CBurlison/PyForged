@@ -10,9 +10,12 @@ class AnimationStore:
         self.animations: dict[str, Animation] = {}
 
         anim = Animation([
-            AnimationHelper.create_atlas_frame(image_store.images["TestAtlas"], (8, 3128), 512, 512),
-            AnimationHelper.create_atlas_frame(image_store.images["TestAtlas"], (528, 3128), 512, 512),
-            AnimationHelper.create_atlas_frame(image_store.images["TestAtlas"], (1048, 3128), 512, 512),
-            AnimationHelper.create_atlas_frame(image_store.images["TestAtlas"], (1568, 3128), 512, 512)
+            AnimationHelper.create_atlas_frame(image_store.get_image("TestAtlas"), (8, 3128), 512, 512),
+            AnimationHelper.create_atlas_frame(image_store.get_image("TestAtlas"), (528, 3128), 512, 512),
+            AnimationHelper.create_atlas_frame(image_store.get_image("TestAtlas"), (1048, 3128), 512, 512),
+            AnimationHelper.create_atlas_frame(image_store.get_image("TestAtlas"), (1568, 3128), 512, 512)
         ], 6, True)
         self.animations["Human_Idle"] = anim
+
+    def get_animation(self, anim_name: str) -> Animation:
+        return self.animations[anim_name]

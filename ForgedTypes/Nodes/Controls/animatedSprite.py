@@ -8,6 +8,9 @@ from ForgedTypes.Animation.animation import Animation
 from ForgedTypes.Animation.animationFrame import AnimationFrame
 from ForgedTypes.Nodes.Controls.control import Control
 
+class AnimationException(Exception):
+    pass
+
 class SizeMode(Enum):
     Size = 0
     Sprite = 1
@@ -15,12 +18,12 @@ class SizeMode(Enum):
 class AnimatedSprite(Control):
     def __init__(self, size_mode: SizeMode = SizeMode.Sprite):
         super().__init__()
-        self.__frame_time: float = 0.0
-        self.__frame_timer: float = 0.0
-        self.__playing: bool = False
-        self.__current_animation: Animation = None
-        self.__current_frame: AnimationFrame = None
-        self.__current_animation_length: int = 0
+        self.frame_time: float = 0.0
+        self.frame_timer: float = 0.0
+        self.playing: bool = False
+        self.current_animation: Animation = None
+        self.current_frame: AnimationFrame = None
+        self.current_animation_length: int = 0
 
         self.animation_start_events: list[typing.Any] = []
         self.animation_end_events: list[typing.Any] = []
@@ -34,71 +37,71 @@ class AnimatedSprite(Control):
 
     def set_animation(self, animation: str):
         if animation not in self.animations:
-            return
+            raise AnimationException(f"Animation ({animation}) does not exist.")
         
-        self.__current_animation = self.animations[animation]
-        self.__current_animation_length = len(self.__current_animation.frames)
+        self.current_animation = self.animations[animation]
+        self.current_animation_length = len(self.current_animation.frames)
         self.set_frame(0)
-        self.__frame_time = 1 / self.__current_animation.fps
+        self.frame_time = 1 / self.current_animation.fps
         self.loop_count = 0
 
     def play_animation(self, animation: str):
         if animation not in self.animations:
-            return
+            raise AnimationException(f"Animation ({animation}) does not exist.")
         
         self.set_animation(animation)
-        self.__playing = True
+        self.playing = True
         self.__trigger_events(self.animation_start_events, True)
 
     def play(self):
-        if self.animation not in self.animations or self.__current_animation_length == 0:
-            return
+        if self.animation not in self.animations or self.current_animation_length == 0:
+            raise AnimationException(f"Animation ({self.animation}) does not exist or has no frames")
         
-        self.__playing = True
+        self.playing = True
 
-        if self.frame + 1 == self.__current_animation_length:
+        if self.frame + 1 == self.current_animation_length:
             self.set_frame(0)
             
-        self.__trigger_events(self.animation_start_events, self.frame < 1 and self.__frame_timer < 1)
+        self.__trigger_events(self.animation_start_events, self.frame < 1 and self.frame_timer < 1)
 
     def stop(self):
-        self.__playing = False
-        self.__trigger_events(self.animation_end_events, self.frame + 1 == self.__current_animation_length)
+        self.playing = False
+        self.__trigger_events(self.animation_end_events, self.frame + 1 == self.current_animation_length)
 
     def set_frame(self, frame: int, reset_timer: bool = True):
         self.frame = frame
 
         if reset_timer:
-            self.__frame_timer = 0.0
+            self.frame_timer = 0.0
 
         self.__change_frame(frame)
 
     def process(self, delta: float):
-        if not self.__playing or self.__current_animation_length == 0:
+        if not self.playing or self.current_animation_length == 0:
             return
         
         super().process(delta)
-        self.__frame_timer += delta
+        self.frame_timer += delta
 
-        frame_time = self.__frame_time
+        frame_time = self.frame_time
         
-        if self.__current_frame is not None:
-            frame_time = frame_time * self.__current_frame.frame_duration
+        if self.current_frame is not None:
+            frame_time = frame_time * self.current_frame.frame_duration
 
-        if self.__frame_timer < frame_time:
+        if self.frame_timer < frame_time:
             return
         
-        self.__frame_timer -= frame_time
+        self.frame_timer -= frame_time
         
-        if self.frame + 1 == self.__current_animation_length: # check for loop or stop
-            if self.__current_animation.loop:
+        if self.frame + 1 == self.current_animation_length: # check for loop or stop
+            if self.current_animation.loop:
                 self.set_frame(0, False)
                 self.__trigger_loop_events()
                 self.loop_count += 1
                 return
             else: # should never hit this but it somehow snuck through
                 self.stop()
-                self.__frame_timer = 0.0
+                self.frame_timer = 0.0
                 self.loop_count = 0
                 return
         else: # continue animation
@@ -106,14 +109,14 @@ class AnimatedSprite(Control):
 
         self.__change_frame(self.frame)
 
-        if self.frame + 1 == self.__current_animation_length and not self.__current_animation.loop:
+        if self.frame + 1 == self.current_animation_length and not self.current_animation.loop:
             self.stop()
-            self.__frame_timer = 0.0
+            self.frame_timer = 0.0
             self.loop_count = 0
 
     def update_surface(self, force: bool = False):
-        if self.__current_frame is not None:
-            self.surface = self.__current_frame.frame.copy()
+        if self.current_frame is not None:
+            self.surface = self.current_frame.frame.copy()
         else:
             self.surface = pygame.Surface((1, 1))
 
@@ -141,6 +144,6 @@ class AnimatedSprite(Control):
             ev(self, start_end)
 
     def __change_frame(self, frame: int):
-        self.__current_frame = self.__current_animation.frames[frame]
+        self.current_frame = self.current_animation.frames[frame]
         self.update_surface(True)
         self.surface.set_colorkey(self.color)

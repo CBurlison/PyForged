@@ -57,7 +57,7 @@ def main():
     anim.position = (500, 500)
     anim.size_mode = SizeMode.Sprite
     anim.scale = 0.5
-    anim.animations["idle"] = animation_store.animations["Human_Idle"]
+    anim.animations["idle"] = animation_store.get_animation("Human_Idle")
     anim.anchor_point = AnchorPoint.TopCenter
     anim.update_surface()
     game_tree.add_child(anim)
@@ -69,7 +69,7 @@ def main():
     anim2.position = (700, 500)
     anim2.size = (128, 128)
     anim2.size_mode = SizeMode.Size
-    anim2.animations["idle"] = animation_store.animations["Human_Idle"]
+    anim2.animations["idle"] = animation_store.get_animation("Human_Idle")
     anim2.anchor_point = AnchorPoint.BottomCenter
     anim2.update_surface()
     game_tree.add_child(anim2)
