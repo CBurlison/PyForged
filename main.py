@@ -9,7 +9,8 @@ from Scenes.FpsCounter.fpsCounter import FpsCounter
 from Factories.nodeFactory import NodeFactory
 from Data.imageStore import ImageStore
 from Data.animationStore import AnimationStore
-from ForgedTypes.Nodes.Controls.animatedSprite import AnimatedSprite, SizeMode
+from ForgedTypes.Nodes.Controls.Sprites.animatedSprite import AnimatedSprite
+from ForgedTypes.Nodes.Controls.Sprites.sprite import Sprite, SizeMode
 from ForgedTypes.Nodes.Controls.control import AnchorPoint
 
 def loop_10_free(anim: AnimatedSprite):
@@ -44,7 +45,7 @@ def main():
     di_container.register_instance(pygame.Surface, pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)))
     di_container.register_instance(ImageStore, ImageStore())
     di_container.register_instance(AnimationStore)
-    animation_store: AnimationStore = di_container.locate(AnimationStore)
+    _ = di_container.locate(AnimationStore)
     
     game_tree = node_factory.locate_node(Tree)
     di_container.register_instance(Tree, game_tree)
@@ -54,10 +55,10 @@ def main():
     game_data: GameState = di_container.locate(GameState)
 
     anim: AnimatedSprite = node_factory.locate_control(AnimatedSprite)
-    anim.position = (500, 500)
-    anim.size_mode = SizeMode.Sprite
-    anim.scale = 0.5
-    anim.animations["idle"] = animation_store.get_animation("Human_Idle")
+    anim.transform.position = (500, 500)
+    anim.transform.size_mode = SizeMode.Sprite
+    anim.transform.scale = 0.5
+    anim.add_animation("idle", "Human_Idle")
     anim.anchor_point = AnchorPoint.TopCenter
     anim.update_surface()
     game_tree.add_child(anim)
@@ -66,15 +67,23 @@ def main():
     anim = None
 
     anim2: AnimatedSprite = node_factory.locate_control(AnimatedSprite)
-    anim2.position = (700, 500)
-    anim2.size = (128, 128)
-    anim2.size_mode = SizeMode.Size
-    anim2.animations["idle"] = animation_store.get_animation("Human_Idle")
+    anim2.transform.position = (800, 500)
+    anim2.transform.size = (128, 128)
+    anim2.transform.size_mode = SizeMode.Size
+    anim2.add_animation("idle", "Human_Idle")
     anim2.anchor_point = AnchorPoint.BottomCenter
     anim2.update_surface()
     game_tree.add_child(anim2)
     anim2.play_animation("idle")
     anim2 = None
+
+    sprite: Sprite = node_factory.locate_control(Sprite)
+    sprite.transform.position = (500, 200)
+    sprite.transform.size = (256, 256)
+    sprite.sprite = "Human_Portrait"
+    sprite.transform.size_mode = SizeMode.Size
+    game_tree.add_child(sprite)
+    sprite = None
 
     fps_label: FpsCounter = node_factory.locate_control(FpsCounter)
     fps_label.position = (SCREEN_WIDTH/2, 60)
@@ -87,7 +96,6 @@ def main():
     pygame.display.flip()
     game_clock.tick(game_data.FPS)
 
-    animation_store = None
     node_factory = None
 
     # Main game loop

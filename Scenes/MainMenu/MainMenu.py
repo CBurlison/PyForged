@@ -16,8 +16,9 @@ class MainMenu(Control):
 
         self.node_factory: NodeFactory = node_factory
 
-        self.size = (50, 50)
-        self.position = (250, 250)
+        self.transform.size = (50, 50)
+        self.transform.position = (250, 250)
+
         self.color = (0, 0, 0)
         self.delta: float = 0.001
 
@@ -28,14 +29,14 @@ class MainMenu(Control):
 
         box: FlashyBox = self.node_factory.locate_control(FlashyBox)
         box.color = (255, 255, 255)
-        box.size = (10, 10)
-        box.position = (260, 260)
+        box.transform.size = (10, 10)
+        box.transform.position = (260, 260)
         box.update_surface()
 
         self.add_child(box)
 
         label: Label = self.node_factory.locate_control(Label, [FontInfo(bold=True), "Test label"])
-        label.position = (250, 230)
+        label.transform.position = (250, 230)
         
         label.update_surface()
         self.add_child(label)
@@ -48,15 +49,15 @@ class MainMenu(Control):
         self.delta = delta
 
     def mouse_entered(self):
-        self.position = (self.position[0] - 20, self.position[1] - 20)
-        self.size = (self.size[0] + 40, self.size[1] + 40)
+        self.transform.position = (self.transform.position[0] - 20, self.transform.position[1] - 20)
+        self.transform.size = (self.transform.size[0] + 40, self.transform.size[1] + 40)
         self.update_surface()
 
         super().mouse_entered()
 
     def mouse_exited(self):
-        self.position = (self.position[0] + 20, self.position[1] + 20)
-        self.size = (self.size[0] - 40, self.size[1] - 40)
+        self.transform.position = (self.transform.position[0] + 20, self.transform.position[1] + 20)
+        self.transform.size = (self.transform.size[0] - 40, self.transform.size[1] - 40)
         self.update_surface()
         
         super().mouse_exited()

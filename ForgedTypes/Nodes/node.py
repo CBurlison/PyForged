@@ -1,6 +1,7 @@
 import pygame
 from ForgedTypes.gameState import GameState
 from ForgedTypes.Models.queuedEvent import QueuedEvent
+from ForgedTypes.Models.transform import Transform
 
 class Node:
     def __init__(self):
@@ -15,10 +16,8 @@ class Node:
 
         self.surface: pygame.Surface = None
         self.rect: pygame.Rect = None
-        self.size: tuple[int, int] = (0, 0)
-        self.position: tuple[int, int] = (0, 0)
+        self.transform: Transform = Transform()
         self.color: tuple[int, int, int] = (0, 0, 0)
-        self.scale: float = 1.0
         
         # set in DI
         self.game_tree: "Node" = None
@@ -31,6 +30,14 @@ class Node:
 
     def process(self, delta: float):
         """Called every frame. delta is last frame time in seconds"""
+        pass
+
+    def internal_process(self, delta: float):
+        """Called every frame. delta is last frame time in seconds. NOT diabled by run_process.
+        
+This is used by nodes rather than scenes to do what nodes do. Do not override unless absolutely necessary and always call super().internal_process(delta) when doing so. 
+
+Called prior to process."""
         pass
 
     def enter_tree(self):
@@ -117,9 +124,9 @@ class Node:
         if self.rect is not None:
             self.rect.x += amount[0]
             self.rect.y += amount[1]
-            self.position = (self.rect.x, self.rect.y)
+            self.transform.position = (self.rect.x, self.rect.y)
         else:
-            self.position = (self.position[0] + amount[0], self.position[1] + amount[1])
+            self.transform.position = (self.transform.position[0] + amount[0], self.transform.position[1] + amount[1])
             
         self.move_children(amount)
 
@@ -129,9 +136,9 @@ class Node:
             if child.rect is not None:
                 child.rect.x += amount[0]
                 child.rect.y += amount[1]
-                child.position = (child.rect.x, child.rect.y)
+                child.transform.position = (child.rect.x, child.rect.y)
             else:
-                child.position = (child.position[0] + amount[0], child.position[1] + amount[1])
+                child.transform.position = (child.transform.position[0] + amount[0], child.transform.position[1] + amount[1])
                 
             child.move_children(amount)
         
@@ -140,9 +147,9 @@ class Node:
         if self.rect is not None:
             self.rect.x = position[0]
             self.rect.y = position[1]
-            self.position = (self.rect.x, self.rect.y)
+            self.transform.position = (self.rect.x, self.rect.y)
         else:
-            self.position = position
+            self.transform.position = position
             
         self.move_children_to(position)
 
@@ -152,30 +159,30 @@ class Node:
             if child.rect is not None:
                 child.rect.x = position[0]
                 child.rect.y = position[1]
-                child.position = (child.rect.x, child.rect.y)
+                child.transform.position = (child.rect.x, child.rect.y)
             else:
-                child.position = position
+                child.transform.position = position
 
             child.move_children_to(position)
 
     def update_surface(self, force: bool = False):
-        """Re-creates, re-colors, and re-scales the node surface based on self.size, self.color, and self.scale"""
-        if force or (self.surface is None or self.surface.get_size() != self.size):
-            self.surface = pygame.Surface(self.size)
+        """Re-creates, re-colors, and re-scales the node surface based on self.transform.size, self.color, and self.transform.scale"""
+        if force or (self.surface is None or self.surface.get_size() != self.transform.size):
+            self.surface = pygame.Surface(self.transform.size)
 
         if self.color is not None:
             self.surface.fill(self.color)
 
-        if self.scale != 1.0:
-            self.surface = pygame.transform.scale(self.surface, (self.size[0] * self.scale, self.size[1] * self.scale))
+        if self.transform.scale != 1.0:
+            self.surface = pygame.transform.scale(self.surface, (self.transform.size[0] * self.transform.scale, self.transform.size[1] * self.transform.scale))
 
         self.set_rect()
 
     def set_rect(self):
-        """Sets rect based on current surface and sets rect position based on self.position"""
+        """Sets rect based on current surface and sets rect position based on self.transform.position"""
         self.rect = self.surface.get_rect()
-        self.rect.x = self.position[0]
-        self.rect.y = self.position[1]
+        self.rect.x = self.transform.position[0]
+        self.rect.y = self.transform.position[1]
         
     def draw(self):
         """Adds this surface and the surfaces of child nodes to the screen"""
@@ -183,7 +190,7 @@ class Node:
             return
 
         if self.surface is not None and self.screen is not None:
-            self.screen.blit(self.surface, self.position)
+            self.screen.blit(self.surface, self.transform.position)
 
         self.draw_children(self)
         
@@ -232,8 +239,10 @@ class Node:
     def process_children(self, process_node: "Node", delta: float):
         """Call process(delta) on child nodes"""
         for child in process_node.children:
-            if child.run_process and not child.freed:
-                child.process(delta)
+            if not child.freed:
+                child.internal_process(delta)
+                if child.run_process:
+                    child.process(delta)
 
             self.process_children(child, delta)
 

@@ -9,7 +9,7 @@ class Label(Control):
     def __init__(self, new_font: FontInfo, text: str):
         super().__init__()
         self.__font_info = new_font
-        self.__font = font.SysFont(new_font.font, new_font.size, new_font.bold, new_font.italic)
+        self.font = font.SysFont(new_font.font, new_font.size, new_font.bold, new_font.italic)
 
         self.text = text
 
@@ -20,9 +20,9 @@ class Label(Control):
     @font_info.setter
     def font_info(self, new_font: FontInfo):
         self.__font_info = new_font
-        self.__font = font.SysFont(new_font.font, new_font.size, new_font.bold, new_font.italic)
+        self.font = font.SysFont(new_font.font, new_font.size, new_font.bold, new_font.italic)
 
     def update_surface(self):
-        self.surface = self.__font.render(self.text, False, self.font_info.color)
+        self.surface = self.font.render(self.text, False, self.font_info.color)
         
         self.set_rect()
