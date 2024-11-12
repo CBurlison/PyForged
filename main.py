@@ -86,9 +86,9 @@ def main():
     sprite = None
 
     fps_label: FpsCounter = node_factory.locate_control(FpsCounter)
-    fps_label.position = (SCREEN_WIDTH/2, 60)
-    fps_label.size = (SCREEN_WIDTH, 60)
-    
+    fps_label.transform.position = (SCREEN_WIDTH/2, 60)
+    fps_label.transform.size = (SCREEN_WIDTH, 60)
+    fps_label.anchor_point = AnchorPoint.Center
     fps_label.update_surface()
     game_tree.add_child(fps_label)
     
@@ -100,19 +100,13 @@ def main():
 
     # Main game loop
     while True:
-        frame_ticks = game_clock.get_time()
-
-        delta = 0
-        if frame_ticks > 0:
-            delta = frame_ticks / 1000.0
-
-        game_data.delta = delta
+        game_data.delta = calc_delta_sec(game_clock.get_time())
         game_tree.screen.fill((128, 128, 128))
 
         if not event_handler.process_frame_events():
             break
        
-        game_tree.process_children(game_tree, delta)
+        game_tree.process_children(game_tree, game_data.delta)
         game_tree.check_mouse_over(event_handler.mouse_pos)
 
         game_tree.run_queue_events()
@@ -126,6 +120,12 @@ def main():
 
     # Done! Time to quit.
     pygame.quit()
+
+def calc_delta_sec(ms):
+    if ms > 0:
+        return ms / 1000.0
+    
+    return ms
 
 if __name__ == "__main__":
     main()

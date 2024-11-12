@@ -37,7 +37,7 @@ class Node:
         
 This is used by nodes rather than scenes to do what nodes do. Do not override unless absolutely necessary and always call super().internal_process(delta) when doing so. 
 
-Called prior to process."""
+Called prior to .process(delta)."""
         pass
 
     def enter_tree(self):
@@ -239,7 +239,7 @@ Called prior to process."""
     def process_children(self, process_node: "Node", delta: float):
         """Call process(delta) on child nodes"""
         for child in process_node.children:
-            if not child.freed:
+            if child.is_valid():
                 child.internal_process(delta)
                 if child.run_process:
                     child.process(delta)
