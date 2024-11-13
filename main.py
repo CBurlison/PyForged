@@ -1,21 +1,25 @@
 import pygame
-from PythonDI import DIContainer
-from eventHandler import EventHandler
-from ForgedTypes.Nodes.tree import Tree
-from ForgedTypes.gameState import GameState
-from Helpers import DIHelper
-from Scenes.MainMenu.mainMenu import MainMenu
-from Scenes.FpsCounter.fpsCounter import FpsCounter
-from Factories.nodeFactory import NodeFactory
-from Data.imageStore import ImageStore
-from Data.animationStore import AnimationStore
-from ForgedTypes.Nodes.Controls.Sprites.animatedSprite import AnimatedSprite
-from ForgedTypes.Nodes.Controls.Sprites.sprite import Sprite, SizeMode
-from ForgedTypes.Nodes.Controls.control import AnchorPoint
+from Data.PythonDI import DIContainer
+from Data.eventHandler import EventHandler
+from Data.ForgedTypes.Nodes.tree import Tree
+from Data.ForgedTypes.gameState import GameState
+from Data.Helpers import DIHelper
+from Data.Scenes.MainMenu.mainMenu import MainMenu
+from Data.Scenes.FpsCounter.fpsCounter import FpsCounter
+from Data.Factories.nodeFactory import NodeFactory
+from Data.GameData.imageStore import ImageStore
+from Data.GameData.animationStore import AnimationStore
+from Data.ForgedTypes.Nodes.Controls.Sprites.animatedSprite import AnimatedSprite
+from Data.ForgedTypes.Nodes.Controls.Sprites.sprite import Sprite, SizeMode
+from Data.ForgedTypes.Nodes.Controls.Sprites.button import Button
+from Data.ForgedTypes.Nodes.Controls.control import AnchorPoint
 
 def loop_10_free(anim: AnimatedSprite):
     if anim.loop_count == 2:
         anim.queue_free()
+
+def button_pressed(btn: Button):
+    btn.game_tree.get_node("anim2").queue_free()
 
 def main():
     pygame.init()
@@ -55,6 +59,7 @@ def main():
     game_data: GameState = di_container.locate(GameState)
 
     anim: AnimatedSprite = node_factory.locate_control(AnimatedSprite)
+    anim.name = "anim"
     anim.transform.position = (500, 500)
     anim.transform.size_mode = SizeMode.Sprite
     anim.transform.scale = 0.5
@@ -67,6 +72,7 @@ def main():
     anim = None
 
     anim2: AnimatedSprite = node_factory.locate_control(AnimatedSprite)
+    anim2.name = "anim2"
     anim2.transform.position = (800, 500)
     anim2.transform.size = (128, 128)
     anim2.transform.size_mode = SizeMode.Size
@@ -90,6 +96,13 @@ def main():
     fps_label.transform.size = (SCREEN_WIDTH, 60)
     fps_label.anchor_point = AnchorPoint.Center
     game_tree.add_child(fps_label)
+
+    btn: Button = node_factory.locate_control(Button, ["Button"])
+    btn.clicked_img = "ButtonPressed"
+    btn.pressed_events.append(button_pressed)
+    btn.transform.size_mode = SizeMode.Sprite
+    btn.transform.position = (500, 800)
+    game_tree.add_child(btn)
     
     game_tree.screen.fill((128, 128, 128))
     pygame.display.flip()
@@ -105,8 +118,8 @@ def main():
         if not event_handler.process_frame_events():
             break
        
-        game_tree.process_children(game_tree, game_data.delta)
         game_tree.check_mouse_over(event_handler.mouse_pos)
+        game_tree.process_children(game_tree, game_data.delta)
 
         game_tree.run_queue_events()
 
