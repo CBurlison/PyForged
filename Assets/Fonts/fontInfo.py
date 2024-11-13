@@ -1,3 +1,5 @@
+BLACK: tuple[int, int, int] = (1, 1, 1)
+
 class FontInfo:
     def __init__(self, 
                  font: str = "Arial", 
@@ -6,7 +8,7 @@ class FontInfo:
                  bold: bool = False, 
                  italic: bool = False,
                  outline: int = 0,
-                 outline_color: tuple[int, int, int] = (0, 0, 0)) -> None:
+                 outline_color: tuple[int, int, int] = BLACK) -> None:
         self.font: str = font
         self.size: int = size
         self.color: tuple[int, int, int] = color

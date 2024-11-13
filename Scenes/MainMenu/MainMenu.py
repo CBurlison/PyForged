@@ -32,13 +32,10 @@ class MainMenu(Control):
         box.transform.size = (10, 10)
         box.transform.position = (260, 260)
         box.update_surface()
-
         self.add_child(box)
 
         label: Label = self.node_factory.locate_control(Label, [FontInfo(bold=True), "Test label"])
         label.transform.position = (250, 230)
-        
-        label.update_surface()
         self.add_child(label)
 
         self.event_handler.add_movement_event(self, self.__move_event)

@@ -89,7 +89,6 @@ def main():
     fps_label.transform.position = (SCREEN_WIDTH/2, 60)
     fps_label.transform.size = (SCREEN_WIDTH, 60)
     fps_label.anchor_point = AnchorPoint.Center
-    fps_label.update_surface()
     game_tree.add_child(fps_label)
     
     game_tree.screen.fill((128, 128, 128))
