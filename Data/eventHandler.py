@@ -93,7 +93,9 @@ class EventHandler:
         self.mouse_movement: tuple[int, int] = None
         
         self.build_button_groups: bool = True
-        self.button_groups: dict[str, list[typing.Any]] = []
+        self.button_groups: dict[str, list[typing.Any]] = {}
+
+        self.get_all_buttons = None
 
     # key press events
     def add_key_press_event(self, control, input_key: MappedInput, input_time: InputTime, input_event) -> KeyPresskEvent:
@@ -168,7 +170,7 @@ class EventHandler:
     
     def get_buttons_by_group(self, group: str) -> list[typing.Any]:
         if self.build_button_groups:
-            self.update_button_groups()
+            self.get_all_buttons()
 
         if group in self.button_groups:
             return self.button_groups[group]

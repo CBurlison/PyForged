@@ -21,6 +21,7 @@ class NodeFactory:
 If setup=False it is recomended to run the .setup() method manually in order to make sure the node is instantiated properly."""
         ret: node.Node = self.di_container.locate(node_type, params)
         ret.screen = self.di_container.locate(pygame.Surface)
+        ret.screen_rect = ret.screen.get_rect()
         ret.game_tree = self.di_container.locate(tree.Tree)
         ret.game_state = self.di_container.locate(GameState)
 

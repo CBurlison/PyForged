@@ -29,6 +29,7 @@ class Node:
         ################################################################################################
         self.game_tree: "Node" = None
         self.screen: pygame.Surface = None
+        self.screen_rect: pygame.Rect = None
         self.game_state: GameState = None
 
     @property
@@ -62,8 +63,25 @@ Called prior to .process(delta)."""
         """called when first entering tree with add_child"""
         pass
 
+    def internal_enter_tree(self):
+        """called when first entering tree with add_child
+        
+This is used by nodes rather than scenes to do what nodes do. Do not override unless absolutely necessary and always call super().internal_enter_tree() when doing so. 
+
+Called prior to .enter_tree(delta)."""
+        self.game_tree.clear_node_groups()
+
     def exit_tree(self):
+        """called when finally exiting tree when .free() is called."""
         pass
+
+    def internal_exit_tree(self):
+        """called when finally exiting tree when .free() is called.
+        
+This is used by nodes rather than scenes to do what nodes do. Do not override unless absolutely necessary and always call super().internal_exit_tree() when doing so. 
+
+Called prior to .exit_tree(delta)."""
+        self.game_tree.clear_node_groups()
 
     def add_child(self, new_child: "Node"):
         """Adds a child to this node and calls enter tree events if first time added"""
@@ -75,6 +93,7 @@ Called prior to .process(delta)."""
 
         if new_child.is_new_node:
             new_child.is_new_node = False
+            new_child.internal_enter_tree()
             new_child.enter_tree()
             new_child.game_tree.enter_tree_events(self)
 
@@ -99,6 +118,7 @@ Called prior to .process(delta)."""
             return
 
         self.game_tree.clear_node_groups()
+        self.internal_exit_tree()
         self.exit_tree()
         self.game_tree.exit_tree_events(self)
         self.freed = True
@@ -225,6 +245,11 @@ Called prior to .process(delta)."""
         return not self.freed
     
     def get_node(self, path: str) -> "Node":
+        """Returns a node or None based on the path and the target node's name.
+        
+Control/other/Target - Will seach for the node named Target that is the child of Control and then the child of Other.
+
+Target - Will search for the node named Target in the children of the current node."""
         if path == "":
             raise ValueError("Node path for get_node can not be empty or end in /.")
 
@@ -239,11 +264,14 @@ Called prior to .process(delta)."""
                 if name == path:
                     return node
                 else:
-                    node.get_node(path.removeprefix(name + "/"))
+                    return node.get_node(path.removeprefix(name + "/"))
             
         return None
     
     def get_nodes(self, condition) -> list["Node"]:
+        """Returns a node or None based on the supplied condition. condition accepts 1 parameter, that is the Node it is evaluating.
+
+The condition should return a bool corrisponding to if the node matches the condition or not."""
         ret: list["Node"] = []
 
         for node in self.children:
@@ -253,7 +281,7 @@ Called prior to .process(delta)."""
 
                 ret += node.get_nodes(condition)
             
-        return []
+        return ret
     
     ################################################################################################
     #   control methods
@@ -297,6 +325,7 @@ Called prior to .process(delta)."""
     def set_screen(self, screen: pygame.Surface):
         """set self.screen for this and all child nodes"""
         self.screen = screen
+        self.screen_rect = self.screen.get_rect()
 
         for child in self.children:
             child.set_screen(screen)
@@ -314,9 +343,11 @@ Called prior to .process(delta)."""
         pass
 
     def clear_node_groups(self):
+        """When run in the tree sets the node groups to dirty so they will be rebuilt."""
         pass
     
     def get_nodes_by_group(self, group: str) -> list["Node"]:
+        """When run in the tree returns all nodes in the given group."""
         return []
 
     def update_node_groups(self):

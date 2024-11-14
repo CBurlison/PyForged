@@ -14,7 +14,8 @@ class Button(Sprite):
         super().__init__(transform, image_store)
         self.__toggable: bool = False
         self.__button_group: str | None = None
-        self.toggled: bool = False
+        self.__toggled: bool = False
+        self.unique_toggle: bool = False
         self.set_this_frame: bool = False
 
         self.default_img: str = default_img
@@ -43,6 +44,20 @@ class Button(Sprite):
 
         if not enable:
             self.toggled = False
+
+    @property
+    def toggled(self) -> bool:
+        return self.__toggled
+    
+    @toggled.setter
+    def toggled(self, enable: bool):
+        self.__toggled = enable
+        
+        if self.toggled and self.unique_toggle:
+            btns: list["Button"] = self.event_handler.get_buttons_by_group(self.button_group)
+            for btn in btns:
+                if btn != self:
+                    btn.toggled = False
 
     @property
     def button_group(self) -> str | None:
@@ -101,3 +116,11 @@ class Button(Sprite):
     def free(self):
         self.event_handler.clear_button_groups()
         super().free()
+
+    def internal_enter_tree(self):
+        super().internal_enter_tree()
+        self.event_handler.clear_button_groups()
+
+    def internal_exit_tree(self):
+        super().internal_exit_tree()
+        self.event_handler.clear_button_groups()
