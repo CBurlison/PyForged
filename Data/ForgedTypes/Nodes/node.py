@@ -2,6 +2,7 @@ import pygame
 from Data.ForgedTypes.gameState import GameState
 from Data.ForgedTypes.Models.queuedEvent import QueuedEvent
 from Data.ForgedTypes.Models.transform import Transform
+from Data.ForgedTypes.Models.inputState import InputState
 
 class Node:
     def __init__(self):
@@ -21,10 +22,25 @@ class Node:
         self.transform.owner = self
         self.color: tuple[int, int, int] = (0, 0, 0)
         
-        # set in DI
+        self.__group: str | None = None
+
+        ################################################################################################
+        #   set in Factory
+        ################################################################################################
         self.game_tree: "Node" = None
         self.screen: pygame.Surface = None
         self.game_state: GameState = None
+
+    @property
+    def group(self) -> str | None:
+        return self.__group
+    
+    @group.setter
+    def group(self, new_group: str | None):
+        self.__group = new_group
+        
+        if self.game_tree is not None:
+            self.game_tree.clear_node_groups()
 
     def setup(self):
         """Called in DI after setting things like screen and game_tree."""
@@ -82,6 +98,7 @@ Called prior to .process(delta)."""
         if self.freed:
             return
 
+        self.game_tree.clear_node_groups()
         self.exit_tree()
         self.game_tree.exit_tree_events(self)
         self.freed = True
@@ -218,13 +235,25 @@ Called prior to .process(delta)."""
             name = split[0]
 
         for node in self.children:
-            if node.name == name:
+            if node.is_valid() and node.name == name:
                 if name == path:
                     return node
                 else:
                     node.get_node(path.removeprefix(name + "/"))
             
         return None
+    
+    def get_nodes(self, condition) -> list["Node"]:
+        ret: list["Node"] = []
+
+        for node in self.children:
+            if node.is_valid():
+                if condition(node):
+                    ret.append(node)
+
+                ret += node.get_nodes(condition)
+            
+        return []
     
     ################################################################################################
     #   control methods
@@ -245,14 +274,12 @@ Called prior to .process(delta)."""
         """Runs self.mouse_exited_events when called in a Control node"""
         pass
 
-    def check_mouse_over(self, pos: tuple[int, int]) -> bool:
+    def check_mouse_over(self, pos: tuple[int, int], state: InputState = InputState()):
         """Check if the mouse is hovering over this node of children"""
         if self.visible:
             for child in self.children:
-                if not child.freed and child.check_mouse_over(pos):
-                    return True
-                
-        return False
+                if not child.freed:
+                    child.check_mouse_over(pos, state)
             
     ################################################################################################
     #   tree methods
@@ -284,4 +311,14 @@ Called prior to .process(delta)."""
 
     def run_queue_events(self):
         """runs self.event_queue events. Only does anything when called from the Tree node."""
+        pass
+
+    def clear_node_groups(self):
+        pass
+    
+    def get_nodes_by_group(self, group: str) -> list["Node"]:
+        return []
+
+    def update_node_groups(self):
+        """Rebuilds the collection of node groups."""
         pass

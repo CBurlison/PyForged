@@ -7,11 +7,13 @@ from Data.eventHandler import InputTime
 from Data.GameData.imageStore import ImageStore
 from Data.ForgedTypes.Models.transform import Transform
 from Data.ForgedTypes.Nodes.Controls.Sprites.sprite import Sprite
+from Data.ForgedTypes.Nodes.Controls.control import MouseInterraction
 
 class Button(Sprite):
     def __init__(self, default_img: str, transform: Transform, image_store: ImageStore):
         super().__init__(transform, image_store)
         self.__toggable: bool = False
+        self.__button_group: str | None = None
         self.toggled: bool = False
         self.set_this_frame: bool = False
 
@@ -22,6 +24,7 @@ class Button(Sprite):
         self.toggled_hovered_img: str = default_img
 
         self.sprite = default_img
+        self.mouse_interaction = MouseInterraction.Stop
 
         self.pressed_events: list[typing.Any] = []
 
@@ -31,7 +34,7 @@ class Button(Sprite):
         self.event_handler.add_mousebutton_event(self, 1, InputTime.Pressed, self.__on_hold)
 
     @property
-    def toggable(self):
+    def toggable(self) -> bool:
         return self.__toggable
     
     @toggable.setter
@@ -40,6 +43,17 @@ class Button(Sprite):
 
         if not enable:
             self.toggled = False
+
+    @property
+    def button_group(self) -> str | None:
+        return self.__button_group
+    
+    @button_group.setter
+    def button_group(self, new_group: str | None):
+        self.__button_group = new_group
+        
+        if self.event_handler is not None:
+            self.event_handler.clear_button_groups()
 
     def internal_process(self, delta: float):
         super().internal_process(delta)
@@ -83,3 +97,7 @@ class Button(Sprite):
     def __on_hold(self):
         self.sprite = self.clicked_img
         self.set_this_frame = True
+
+    def free(self):
+        self.event_handler.clear_button_groups()
+        super().free()

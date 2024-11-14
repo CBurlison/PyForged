@@ -1,7 +1,7 @@
 import sys
 sys.path.append("....")
 
-from Data.ForgedTypes.Nodes.Controls.control import Control
+from Data.ForgedTypes.Nodes.Controls.control import Control, MouseInterraction
 from Data.Factories.nodeFactory import NodeFactory
 from Data.Scenes.MainMenu.flashyBox import FlashyBox
 from Data.ForgedTypes.Nodes.Controls.label import Label
@@ -20,6 +20,8 @@ class MainMenu(Control):
 
         self.color = (0, 0, 0)
         self.delta: float = 0.001
+
+        self.mouse_interaction = MouseInterraction.Stop
 
     def setup(self):
         super().setup()

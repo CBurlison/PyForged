@@ -2,6 +2,7 @@ import pygame
 import Data.Helpers.DictHelper as DictHelper
 import Data.Helpers.KeyMap as KeyMap
 import uuid
+import typing
 
 from enum import Enum
 
@@ -41,7 +42,7 @@ class MappedInput:
         return NotImplemented
     
 class MouseClickEvent:
-    def __init__(self, control, button: int, input_time: InputTime, click_event):
+    def __init__(self, control: typing.Any, button: int, input_time: InputTime, click_event):
         self.id: uuid.UUID = uuid.uuid4()
         self.control = control
         self.button = button
@@ -49,26 +50,26 @@ class MouseClickEvent:
         self.click_event = click_event
     
 class MouseMoveEvent:
-    def __init__(self, control, move_event):
+    def __init__(self, control: typing.Any, move_event):
         self.id: uuid.UUID = uuid.uuid4()
         self.control = control
         self.move_event = move_event
     
 class MovementEvent:
-    def __init__(self, control, move_event):
+    def __init__(self, control: typing.Any, move_event):
         self.id: uuid.UUID = uuid.uuid4()
         self.control = control
         self.move_event = move_event
     
 class CustomEvent:
-    def __init__(self, control, event_id: int, custom_event):
+    def __init__(self, control: typing.Any, event_id: int, custom_event):
         self.id: uuid.UUID = uuid.uuid4()
         self.control = control
         self.event_id = event_id
         self.custom_event = custom_event
     
 class KeyPresskEvent:
-    def __init__(self, control, input_id: uuid.UUID, input_time: InputTime, press_event):
+    def __init__(self, control: typing.Any, input_id: uuid.UUID, input_time: InputTime, press_event):
         self.id: uuid.UUID = uuid.uuid4()
         self.control = control
         self.input_id = input_id
@@ -90,6 +91,9 @@ class EventHandler:
         
         self.mouse_pos: tuple[int, int] = (0, 0)
         self.mouse_movement: tuple[int, int] = None
+        
+        self.build_button_groups: bool = True
+        self.button_groups: dict[str, list[typing.Any]] = []
 
     # key press events
     def add_key_press_event(self, control, input_key: MappedInput, input_time: InputTime, input_event) -> KeyPresskEvent:
@@ -158,6 +162,30 @@ class EventHandler:
         self.__process_mousebuttonpressed_events(new_mouse_events)
 
         return True
+    
+    def clear_button_groups(self):
+        self.build_button_groups = True
+    
+    def get_buttons_by_group(self, group: str) -> list[typing.Any]:
+        if self.build_button_groups:
+            self.update_button_groups()
+
+        if group in self.button_groups:
+            return self.button_groups[group]
+        
+        return []
+
+    def update_button_groups(self, targets: list[typing.Any]):
+        if not self.build_button_groups:
+            return
+        
+        self.button_groups.clear()
+        
+        for child in targets:
+            if child.button_group is not None and child.button_group != "":
+                DictHelper.add_list(self.button_groups, child.button_group, child)
+
+        self.build_button_groups = False
 
     def __process_mouse_move(self):
         new_pos = pygame.mouse.get_pos()

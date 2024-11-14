@@ -5,6 +5,7 @@ import pygame
 import typing
 
 from Data.ForgedTypes.Nodes.node import Node
+from Data.ForgedTypes.Models.inputState import InputState
 from enum import Enum
 from Data.eventHandler import (
     EventHandler,
@@ -47,9 +48,13 @@ class Control(Node):
         self.key_press_event_storage: list[KeyPresskEvent] = []
         self.custom_event_storage: list[CustomEvent] = []
 
-        self.event_handler: EventHandler
-        self.mouse_interaction: MouseInterraction = MouseInterraction.Stop
+        self.mouse_interaction: MouseInterraction = MouseInterraction.Ignore
         self.mouse_inside: bool = False
+        
+        ################################################################################################
+        #   set in Factory
+        ################################################################################################
+        self.event_handler: EventHandler
 
     @property
     def anchor_point(self) -> AnchorPoint:
@@ -98,28 +103,28 @@ class Control(Node):
         for ev in self.mouse_exited_events:
             ev()
 
-    def check_mouse_over(self, pos: tuple[int, int]) -> bool:
-        if self.visible and self.mouse_interaction == MouseInterraction.Stop:
+    def check_mouse_over(self, pos: tuple[int, int], state: InputState = InputState()):
+        if not self.visible:
+            return
+
+        for child in self.children:
+            child.check_mouse_over(pos)
+            
+        if self.mouse_interaction == MouseInterraction.Stop:
             #if self.rect is not None and self.calc_anchor_point_rect().collidepoint(pos):
-            if self.rect is not None and self.rect.collidepoint(pos):
-                if not self.mouse_inside:
-                    self.mouse_inside = True
-                    self.run_mouse_entered_events()
-                    self.mouse_entered()
-
-                return True
-
+            if not state.state:
+                if self.rect is not None and self.rect.collidepoint(pos):
+                    if not self.mouse_inside:
+                        self.mouse_inside = True
+                        self.run_mouse_entered_events()
+                        self.mouse_entered()
+                elif self.mouse_inside:
+                    self.__mouse_exited()
             elif self.mouse_inside:
                 self.__mouse_exited()
         else:
             if self.mouse_inside:
                 self.__mouse_exited()
-            
-            for child in self.children:
-                if child.check_mouse_over(pos):
-                    return True
-                
-        return False
     
     def free(self):
         if self.freed:

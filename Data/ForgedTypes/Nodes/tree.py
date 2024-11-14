@@ -1,6 +1,7 @@
 from Data.ForgedTypes.Nodes.node import Node
 from Data.ForgedTypes.Models.queuedEvent import QueuedEvent
 import typing
+import Data.Helpers.DictHelper as DictHelper
 
 class Tree(Node):
     def __init__(self):
@@ -9,6 +10,9 @@ class Tree(Node):
         self.on_exit_tree: list[typing.Any] = []
 
         self.event_queue: list[QueuedEvent] = []
+
+        self.build_groups: bool = True
+        self.node_groups: dict[str, list[Node]] = []
 
     def setup(self):
         super().setup()
@@ -31,3 +35,30 @@ class Tree(Node):
         for ev in queue:
             if ev.caller is None or ev.caller.is_valid():
                 ev.event()
+
+    def clear_node_groups(self):
+        self.build_groups = True
+    
+    def get_nodes_by_group(self, group: str) -> list[Node]:
+        if self.build_groups:
+            self.update_node_groups()
+
+        if group in self.node_groups:
+            return self.node_groups[group]
+        
+        return []
+
+    def update_node_groups(self):
+        if not self.build_groups:
+            return
+        
+        self.node_groups.clear()
+        self.__update_node_groups(self)
+        self.build_groups = False
+
+    def __update_node_groups(self, target: Node):
+        for child in target.children:
+            if child.group is not None and child.group != "":
+                DictHelper.add_list(self.node_groups, child.group, child)
+            
+            self.__update_node_groups(child)

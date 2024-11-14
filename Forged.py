@@ -9,10 +9,11 @@ from Data.Scenes.FpsCounter.fpsCounter import FpsCounter
 from Data.Factories.nodeFactory import NodeFactory
 from Data.GameData.imageStore import ImageStore
 from Data.GameData.animationStore import AnimationStore
+from Data.ForgedTypes.Nodes.node import Node
 from Data.ForgedTypes.Nodes.Controls.Sprites.animatedSprite import AnimatedSprite
 from Data.ForgedTypes.Nodes.Controls.Sprites.sprite import Sprite, SizeMode
 from Data.ForgedTypes.Nodes.Controls.Sprites.button import Button
-from Data.ForgedTypes.Nodes.Controls.control import AnchorPoint, MouseInterraction
+from Data.ForgedTypes.Nodes.Controls.control import AnchorPoint
 
 def loop_10_free(anim: AnimatedSprite):
     if anim.loop_count == 2:
@@ -23,6 +24,15 @@ def button_pressed(btn: Button):
     
     if node is not None:
         node.queue_free()
+
+def is_button(search_node: Node) -> bool:
+    return isinstance(search_node, Button)
+
+def update_groups(event_handler: EventHandler, game_tree: Tree):
+    if event_handler.build_button_groups:
+        event_handler.update_button_groups(game_tree.get_nodes(is_button))
+
+    game_tree.update_node_groups()
 
 def main():
     pygame.init()
@@ -63,7 +73,6 @@ def main():
 
     anim: AnimatedSprite = node_factory.locate_control(AnimatedSprite)
     anim.name = "anim"
-    anim.mouse_interaction = MouseInterraction.Ignore
     anim.transform.position = (500, 500)
     anim.transform.size_mode = SizeMode.Sprite
     anim.transform.scale = 0.5
@@ -77,7 +86,6 @@ def main():
 
     anim2: AnimatedSprite = node_factory.locate_control(AnimatedSprite)
     anim2.name = "anim2"
-    anim2.mouse_interaction = MouseInterraction.Ignore
     anim2.transform.position = (800, 500)
     anim2.transform.size = (128, 128)
     anim2.transform.size_mode = SizeMode.Size
@@ -89,7 +97,6 @@ def main():
     anim2 = None
 
     sprite: Sprite = node_factory.locate_control(Sprite)
-    sprite.mouse_interaction = MouseInterraction.Ignore
     sprite.transform.position = (500, 200)
     sprite.transform.size = (256, 256)
     sprite.sprite = "Human_Portrait"
@@ -98,7 +105,6 @@ def main():
     sprite = None
 
     fps_label: FpsCounter = node_factory.locate_control(FpsCounter)
-    fps_label.mouse_interaction = MouseInterraction.Ignore
     fps_label.transform.position = (SCREEN_WIDTH/2, 60)
     fps_label.transform.size = (SCREEN_WIDTH, 60)
     fps_label.anchor_point = AnchorPoint.Center
@@ -132,6 +138,8 @@ def main():
 
     node_factory = None
 
+    update_groups(event_handler, game_tree)
+
     # Main game loop
     while True:
         game_data.delta = calc_delta_sec(game_clock.get_time())
@@ -144,6 +152,8 @@ def main():
         game_tree.process_children(game_tree, game_data.delta)
 
         game_tree.run_queue_events()
+
+        update_groups(event_handler, game_tree)
 
         game_tree.draw()
 
