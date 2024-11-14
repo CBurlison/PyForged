@@ -302,12 +302,15 @@ The condition should return a bool corrisponding to if the node matches the cond
         """Runs self.mouse_exited_events when called in a Control node"""
         pass
 
-    def check_mouse_over(self, pos: tuple[int, int], state: InputState = InputState()):
+    def check_mouse_over(self, pos: tuple[int, int], state: InputState):
         """Check if the mouse is hovering over this node of children"""
-        if self.visible:
-            for child in self.children:
-                if not child.freed:
-                    child.check_mouse_over(pos, state)
+        if not self.visible or self.freed:
+            return
+
+        index = len(self.children) - 1
+        while index >= 0:
+            self.children[index].check_mouse_over(pos, state)
+            index -= 1
             
     ################################################################################################
     #   tree methods

@@ -12,6 +12,7 @@ from Data.GameData.animationStore import AnimationStore
 from Data.Nodes.node import Node
 from Data.Nodes.Controls.Sprites.button import Button
 from Data.Nodes.Controls.control import AnchorPoint
+from Data.Models.inputState import InputState
 
 def is_button(search_node: Node) -> bool:
     return isinstance(search_node, Button)
@@ -92,7 +93,7 @@ def main():
         if not event_handler.process_frame_events():
             break
        
-        game_tree.check_mouse_over(event_handler.mouse_pos)
+        game_tree.check_mouse_over(event_handler.mouse_pos, InputState())
         game_tree.process_children(game_tree, game_data.delta)
 
         game_tree.run_queue_events()

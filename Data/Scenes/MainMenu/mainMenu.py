@@ -95,6 +95,13 @@ class MainMenu(Control):
         btn.transform.position = (600, 875)
         self.add_child(btn)
         btn = None
+        
+        btn: Button = self.node_factory.locate_control(ToggleButton)
+        btn.name = "btn6"
+        btn.button_group = "main_menu_toggle_buttons"
+        btn.transform.position = (700, 875)
+        self.add_child(btn)
+        btn = None
     
     def __loop_10_free(self, anim: AnimatedSprite):
         if anim.loop_count == 2:

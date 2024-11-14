@@ -101,25 +101,32 @@ class Control(Node):
         for ev in self.mouse_exited_events:
             ev()
 
-    def check_mouse_over(self, pos: tuple[int, int], state: InputState = InputState()):
-        if not self.visible:
+    def check_mouse_over(self, pos: tuple[int, int], state: InputState):
+        if not self.visible or self.freed:
             return
 
-        for child in self.children:
-            child.check_mouse_over(pos)
+        index = len(self.children) - 1
+        while index >= 0:
+            self.children[index].check_mouse_over(pos, state)
+            index -= 1
             
         if self.mouse_interaction == MouseInterraction.Stop:
             #if self.rect is not None and self.calc_anchor_point_rect().collidepoint(pos):
-            if not state.state:
+            if not state.handled:
                 if self.rect is not None and self.rect.collidepoint(pos):
+                    state.handled = True
+                    
                     if not self.mouse_inside:
                         self.mouse_inside = True
                         self.run_mouse_entered_events()
                         self.mouse_entered()
+                        return
                 elif self.mouse_inside:
                     self.__mouse_exited()
+                    return
             elif self.mouse_inside:
                 self.__mouse_exited()
+                return
         else:
             if self.mouse_inside:
                 self.__mouse_exited()
