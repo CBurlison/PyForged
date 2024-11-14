@@ -1,17 +1,17 @@
 import pygame
 from Data.PythonDI import DIContainer
 from Data.eventHandler import EventHandler
-from Data.ForgedTypes.Nodes.tree import Tree
-from Data.ForgedTypes.gameState import GameState
+from Data.Nodes.tree import Tree
+from Data.Models.gameState import GameState
 from Data.Helpers import DIHelper
 from Data.Scenes.MainMenu.mainMenu import MainMenu
 from Data.Scenes.FpsCounter.fpsCounter import FpsCounter
 from Data.Factories.nodeFactory import NodeFactory
 from Data.GameData.imageStore import ImageStore
 from Data.GameData.animationStore import AnimationStore
-from Data.ForgedTypes.Nodes.node import Node
-from Data.ForgedTypes.Nodes.Controls.Sprites.button import Button
-from Data.ForgedTypes.Nodes.Controls.control import AnchorPoint
+from Data.Nodes.node import Node
+from Data.Nodes.Controls.Sprites.button import Button
+from Data.Nodes.Controls.control import AnchorPoint
 
 def is_button(search_node: Node) -> bool:
     return isinstance(search_node, Button)
@@ -55,13 +55,15 @@ def main():
     game_tree = node_factory.locate_node(Tree)
     di_container.register_instance(Tree, game_tree)
 
-    def get_buttons():
+    def update_button_groups():
         event_handler.update_button_groups(game_tree.get_nodes(is_button))
 
-    event_handler.get_all_buttons = get_buttons
+    # EventHandler doesnt have access to the tree for things. Give it what it needs here
+    event_handler.update_button_groups_func = update_button_groups
 
     # Final step before starting game loop
     scene_node: Node = node_factory.locate_control(Node)
+    scene_node.name = "SceneNode"
     game_tree.add_child(scene_node)
     scene_node.add_child(node_factory.locate_control(MainMenu))
     game_data: GameState = di_container.locate(GameState)
@@ -76,7 +78,9 @@ def main():
     pygame.display.flip()
     game_clock.tick(game_data.FPS)
 
+    # Get rid of all of the references we no longer need
     node_factory = None
+    scene_node = None
 
     update_groups(event_handler, game_tree)
 

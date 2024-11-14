@@ -1,8 +1,5 @@
-import sys
-sys.path.append(".")
-
 from Data.GameData.imageStore import ImageStore
-from Data.ForgedTypes.Animation.animation import Animation
+from Data.Models.Animation.animation import Animation
 from Data.Helpers import ImageHelper
 
 class AnimationStore:

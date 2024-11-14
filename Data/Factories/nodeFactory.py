@@ -2,13 +2,13 @@
 import typing
 import pygame
 import Data.PythonDI as PythonDI
-from Data.ForgedTypes.gameState import GameState
+from Data.Models.gameState import GameState
 from Data.eventHandler import EventHandler
-from Data.ForgedTypes.Nodes import (
+from Data.Nodes import (
     node, 
     tree
 )
-from Data.ForgedTypes.Nodes.Controls import control
+from Data.Nodes.Controls import control
 
 
 class NodeFactory:

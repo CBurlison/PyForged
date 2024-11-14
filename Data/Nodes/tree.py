@@ -1,11 +1,12 @@
-from Data.ForgedTypes.Nodes.node import Node
-from Data.ForgedTypes.Models.queuedEvent import QueuedEvent
+from Data.Nodes.node import Node
+from Data.Models.queuedEvent import QueuedEvent
 import typing
 import Data.Helpers.DictHelper as DictHelper
 
 class Tree(Node):
     def __init__(self):
         super().__init__()
+        self.name = "Tree"
         self.on_enter_tree: list[typing.Any] = []
         self.on_exit_tree: list[typing.Any] = []
 

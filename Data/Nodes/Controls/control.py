@@ -1,11 +1,8 @@
-import sys
-sys.path.append("....")
-
 import pygame
 import typing
 
-from Data.ForgedTypes.Nodes.node import Node
-from Data.ForgedTypes.Models.inputState import InputState
+from Data.Nodes.node import Node
+from Data.Models.inputState import InputState
 from enum import Enum
 from Data.eventHandler import (
     EventHandler,
@@ -34,6 +31,7 @@ class AnchorPoint(Enum):
 class Control(Node):
     def __init__(self):
         super().__init__()
+        self.name = "Control"
 
         self.__anchor_point: AnchorPoint = AnchorPoint.TopLeft
         self.calc_anchor_point = self.__anchor_top_left

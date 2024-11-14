@@ -1,17 +1,15 @@
-import sys
-sys.path.append(".....")
-
 import typing
 
 from Data.eventHandler import InputTime
 from Data.GameData.imageStore import ImageStore
-from Data.ForgedTypes.Models.transform import Transform
-from Data.ForgedTypes.Nodes.Controls.Sprites.sprite import Sprite
-from Data.ForgedTypes.Nodes.Controls.control import MouseInterraction
+from Data.Models.transform import Transform
+from Data.Nodes.Controls.Sprites.sprite import Sprite
+from Data.Nodes.Controls.control import MouseInterraction
 
 class Button(Sprite):
     def __init__(self, default_img: str, transform: Transform, image_store: ImageStore):
         super().__init__(transform, image_store)
+        self.name = "Button"
         self.__toggable: bool = False
         self.__button_group: str | None = None
         self.__toggled: bool = False

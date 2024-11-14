@@ -1,14 +1,12 @@
-import sys
-sys.path.append("....")
-
 import pygame
 from Data.GameData.imageStore import ImageStore
-from Data.ForgedTypes.Nodes.Controls.control import Control
-from Data.ForgedTypes.Models.transform import Transform, SizeMode
+from Data.Nodes.Controls.control import Control
+from Data.Models.transform import Transform, SizeMode
 
 class Sprite(Control):
     def __init__(self, transform: Transform, image_store: ImageStore):
         super().__init__()
+        self.name = "Sprite"
         self.image_store = image_store
 
         self.transform = transform

@@ -1,9 +1,6 @@
-import sys
-sys.path.append("....")
-
 import pygame
-from Data.ForgedTypes.Nodes.Controls.label import Label
-from Data.ForgedTypes.Models.fontInfo import FontInfo
+from Data.Nodes.Controls.label import Label
+from Data.Models.fontInfo import FontInfo
 
 class FpsCounter(Label):
     def __init__(self, clock: pygame.time.Clock):

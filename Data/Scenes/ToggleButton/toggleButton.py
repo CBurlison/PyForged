@@ -1,10 +1,11 @@
-from Data.ForgedTypes.Models.transform import Transform, SizeMode
-from Data.ForgedTypes.Nodes.Controls.Sprites.button import Button
+from Data.Models.transform import Transform, SizeMode
+from Data.Nodes.Controls.Sprites.button import Button
 from Data.GameData.imageStore import ImageStore
 
 class ToggleButton(Button):
     def __init__(self, transform: Transform, image_store: ImageStore):
         super().__init__("Button", transform, image_store)
+        self.name = "ToggleButton"
 
     def setup(self):
         super().setup()

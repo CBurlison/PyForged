@@ -1,16 +1,14 @@
-import sys
-sys.path.append("....")
-
 from Data.Factories.nodeFactory import NodeFactory
-from Data.ForgedTypes.Nodes.Controls.control import Control, AnchorPoint
-from Data.ForgedTypes.Nodes.Controls.Sprites.sprite import Sprite, SizeMode
-from Data.ForgedTypes.Nodes.Controls.Sprites.animatedSprite import AnimatedSprite
-from Data.ForgedTypes.Nodes.Controls.Sprites.button import Button
+from Data.Nodes.Controls.control import Control, AnchorPoint
+from Data.Nodes.Controls.Sprites.sprite import Sprite, SizeMode
+from Data.Nodes.Controls.Sprites.animatedSprite import AnimatedSprite
+from Data.Nodes.Controls.Sprites.button import Button
 from Data.Scenes.ToggleButton.toggleButton import ToggleButton
 
 class MainMenu(Control):
     def __init__(self, node_factory: NodeFactory):
         super().__init__()
+        self.name = "MainMenu"
         self.speed: int = 100
 
         self.node_factory: NodeFactory = node_factory

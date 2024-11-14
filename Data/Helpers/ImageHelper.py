@@ -1,5 +1,5 @@
 import pygame
-from Data.ForgedTypes.Animation.animationFrame import AnimationFrame
+from Data.Models.Animation.animationFrame import AnimationFrame
 
 BLACK: tuple[int, int, int] = (0, 0, 0)
 

@@ -1,15 +1,13 @@
-import sys
-sys.path.append("....")
-
 import pygame
-from Data.ForgedTypes.Nodes.Controls.control import Control
-from Data.ForgedTypes.Models.fontInfo import FontInfo
+from Data.Nodes.Controls.control import Control
+from Data.Models.fontInfo import FontInfo
 
 true_black: tuple[int, int, int] = (0, 0, 0)
 
 class Label(Control):
     def __init__(self, new_font: FontInfo, text: str):
         super().__init__()
+        self.name = "Label"
         self.__text: str = ""
 
         self.font_info: FontInfo = new_font

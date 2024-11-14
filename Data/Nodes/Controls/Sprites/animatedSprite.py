@@ -1,12 +1,9 @@
-import sys
-sys.path.append("...")
-
 import typing
 import pygame
-from Data.ForgedTypes.Models.transform import Transform, SizeMode
-from Data.ForgedTypes.Animation.animation import Animation
-from Data.ForgedTypes.Animation.animationFrame import AnimationFrame
-from Data.ForgedTypes.Nodes.Controls.control import Control
+from Data.Models.transform import Transform, SizeMode
+from Data.Models.Animation.animation import Animation
+from Data.Models.Animation.animationFrame import AnimationFrame
+from Data.Nodes.Controls.control import Control
 from Data.GameData.animationStore import AnimationStore
 
 class AnimationException(Exception):
@@ -15,6 +12,7 @@ class AnimationException(Exception):
 class AnimatedSprite(Control):
     def __init__(self, transform: Transform, animation_store: AnimationStore):
         super().__init__()
+        self.name = "AnimatedSprite"
         self.frame_time: float = 0.0
         self.frame_timer: float = 0.0
         self.playing: bool = False

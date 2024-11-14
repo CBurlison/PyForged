@@ -1,8 +1,8 @@
 import pygame
-from Data.ForgedTypes.gameState import GameState
-from Data.ForgedTypes.Models.queuedEvent import QueuedEvent
-from Data.ForgedTypes.Models.transform import Transform
-from Data.ForgedTypes.Models.inputState import InputState
+from Data.Models.gameState import GameState
+from Data.Models.queuedEvent import QueuedEvent
+from Data.Models.transform import Transform
+from Data.Models.inputState import InputState
 
 class Node:
     def __init__(self):

@@ -1,7 +1,4 @@
-import sys
-sys.path.append("...")
-
-from Data.ForgedTypes.Animation.animationFrame import AnimationFrame
+from Data.Models.Animation.animationFrame import AnimationFrame
 
 class Animation:
     def __init__(self, frames: list[AnimationFrame] = [], fps: int = 12, loop: bool = False) -> None:

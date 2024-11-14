@@ -1,6 +1,3 @@
-import sys
-sys.path.append(".")
-
 import pygame
 from Data.Helpers import ImageHelper
 
