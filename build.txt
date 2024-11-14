@@ -1,1 +1,10 @@
-C:\Users\coryb\AppData\Local\Programs\Python\Python312\python.exe -m nuitka main.py
+C:\Users\coryb\AppData\Local\Programs\Python\Python312\python.exe -m nuitka --include-data-dir=Data/Assets/=Data/Assets/ --onefile Forged.py --output-dir=Build
+
+
+FULLSCREEN
+pygame.FULLSCREEN
+
+borderless fullscreen
+pygame.SCALED | pygame.NOFRAME
+
+vsync=0 or 1

@@ -12,6 +12,7 @@ class Sprite(Control):
         self.image_store = image_store
 
         self.transform = transform
+        self.transform.owner = self
         self.__sprite: str = ""
 
     @property

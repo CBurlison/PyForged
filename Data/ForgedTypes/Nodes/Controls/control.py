@@ -1,6 +1,7 @@
 import sys
-sys.path.append("...")
+sys.path.append("....")
 
+import pygame
 import typing
 
 from Data.ForgedTypes.Nodes.node import Node
@@ -35,6 +36,7 @@ class Control(Node):
 
         self.__anchor_point: AnchorPoint = AnchorPoint.TopLeft
         self.calc_anchor_point = self.__anchor_top_left
+        self.calc_anchor_point_rect = self.__anchor_top_left_rect
 
         self.mouse_entered_events: list[typing.Any] = []
         self.mouse_exited_events: list[typing.Any] = []
@@ -59,22 +61,31 @@ class Control(Node):
 
         if new_anchor == AnchorPoint.TopLeft:
             self.calc_anchor_point = self.__anchor_top_left
+            self.calc_anchor_point_rect = self.__anchor_top_left_rect
         elif new_anchor == AnchorPoint.TopCenter:
             self.calc_anchor_point = self.__anchor_top_center
+            self.calc_anchor_point_rect = self.__anchor_top_center_rect
         elif new_anchor == AnchorPoint.TopRight:
             self.calc_anchor_point = self.__anchor_top_right
+            self.calc_anchor_point_rect = self.__anchor_top_right_rect
         elif new_anchor == AnchorPoint.LeftCenter:
             self.calc_anchor_point = self.__anchor_left_center
+            self.calc_anchor_point_rect = self.__anchor_left_center_rect
         elif new_anchor == AnchorPoint.Center:
             self.calc_anchor_point = self.__anchor_center
+            self.calc_anchor_point_rect = self.__anchor_center_rect
         elif new_anchor == AnchorPoint.RightCenter:
             self.calc_anchor_point = self.__anchor_right_center
+            self.calc_anchor_point_rect = self.__anchor_right_center_rect
         elif new_anchor == AnchorPoint.BottomLeft:
             self.calc_anchor_point = self.__anchor_bottom_left
+            self.calc_anchor_point_rect = self.__anchor_bottom_left_rect
         elif new_anchor == AnchorPoint.BottomCenter:
             self.calc_anchor_point = self.__anchor_bottom_center
+            self.calc_anchor_point_rect = self.__anchor_bottom_center_rect
         elif new_anchor == AnchorPoint.BottomRight:
             self.calc_anchor_point = self.__anchor_bottom_right
+            self.calc_anchor_point_rect = self.__anchor_bottom_right_rect
 
     def setup(self):
         super().setup()
@@ -89,6 +100,7 @@ class Control(Node):
 
     def check_mouse_over(self, pos: tuple[int, int]) -> bool:
         if self.visible and self.mouse_interaction == MouseInterraction.Stop:
+            #if self.rect is not None and self.calc_anchor_point_rect().collidepoint(pos):
             if self.rect is not None and self.rect.collidepoint(pos):
                 if not self.mouse_inside:
                     self.mouse_inside = True
@@ -132,7 +144,8 @@ class Control(Node):
     
     def draw(self):
         if self.surface is not None and self.screen is not None:
-            self.screen.blit(self.surface, self.calc_anchor_point())
+            #self.screen.blit(self.surface, self.calc_anchor_point())
+            self.screen.blit(self.surface, self.transform.position)
 
         self.draw_children(self)
         
@@ -194,3 +207,66 @@ class Control(Node):
 
     def __anchor_bottom_right(self) -> tuple[int, int]:
         return (self.transform.position[0] - self.rect.w, self.transform.position[1] - self.rect.h)
+
+    ################################################################################################
+    #   Anchor Rect methods
+    ################################################################################################
+    def __anchor_top_left_rect(self) -> pygame.Rect:
+        return self.rect
+
+    def __anchor_top_center_rect(self) -> pygame.Rect:
+        rect = self.rect.copy()
+        pos = self.__anchor_top_center()
+        rect.x = pos[0]
+        rect.y = pos[1]
+        return rect
+
+
+    def __anchor_top_right_rect(self) -> pygame.Rect:
+        rect = self.rect.copy()
+        pos = self.__anchor_top_right()
+        rect.x = pos[0]
+        rect.y = pos[1]
+        return rect
+
+    def __anchor_left_center_rect(self) -> pygame.Rect:
+        rect = self.rect.copy()
+        pos = self.__anchor_left_center()
+        rect.x = pos[0]
+        rect.y = pos[1]
+        return rect
+
+    def __anchor_center_rect(self) -> pygame.Rect:
+        rect = self.rect.copy()
+        pos = self.__anchor_center()
+        rect.x = pos[0]
+        rect.y = pos[1]
+        return rect
+
+    def __anchor_right_center_rect(self) -> pygame.Rect:
+        rect = self.rect.copy()
+        pos = self.__anchor_right_center()
+        rect.x = pos[0]
+        rect.y = pos[1]
+        return rect
+
+    def __anchor_bottom_left_rect(self) -> pygame.Rect:
+        rect = self.rect.copy()
+        pos = self.__anchor_bottom_left()
+        rect.x = pos[0]
+        rect.y = pos[1]
+        return rect
+
+    def __anchor_bottom_center_rect(self) -> pygame.Rect:
+        rect = self.rect.copy()
+        pos = self.__anchor_bottom_center()
+        rect.x = pos[0]
+        rect.y = pos[1]
+        return rect
+
+    def __anchor_bottom_right_rect(self) -> pygame.Rect:
+        rect = self.rect.copy()
+        pos = self.__anchor_bottom_right()
+        rect.x = pos[0]
+        rect.y = pos[1]
+        return rect

@@ -18,6 +18,7 @@ class Node:
         self.surface: pygame.Surface = None
         self.rect: pygame.Rect = None
         self.transform: Transform = Transform()
+        self.transform.owner = self
         self.color: tuple[int, int, int] = (0, 0, 0)
         
         # set in DI

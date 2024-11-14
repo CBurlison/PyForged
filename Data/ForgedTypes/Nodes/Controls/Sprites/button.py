@@ -1,5 +1,5 @@
 import sys
-sys.path.append("....")
+sys.path.append(".....")
 
 import typing
 
@@ -45,6 +45,7 @@ class Button(Sprite):
         super().internal_process(delta)
 
         if self.set_this_frame:
+            self.set_this_frame = False
             return
         
         if self.mouse_inside:

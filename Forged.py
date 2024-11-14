@@ -12,14 +12,17 @@ from Data.GameData.animationStore import AnimationStore
 from Data.ForgedTypes.Nodes.Controls.Sprites.animatedSprite import AnimatedSprite
 from Data.ForgedTypes.Nodes.Controls.Sprites.sprite import Sprite, SizeMode
 from Data.ForgedTypes.Nodes.Controls.Sprites.button import Button
-from Data.ForgedTypes.Nodes.Controls.control import AnchorPoint
+from Data.ForgedTypes.Nodes.Controls.control import AnchorPoint, MouseInterraction
 
 def loop_10_free(anim: AnimatedSprite):
     if anim.loop_count == 2:
         anim.queue_free()
 
 def button_pressed(btn: Button):
-    btn.game_tree.get_node("anim2").queue_free()
+    node = btn.game_tree.get_node("anim2")
+    
+    if node is not None:
+        node.queue_free()
 
 def main():
     pygame.init()
@@ -60,6 +63,7 @@ def main():
 
     anim: AnimatedSprite = node_factory.locate_control(AnimatedSprite)
     anim.name = "anim"
+    anim.mouse_interaction = MouseInterraction.Ignore
     anim.transform.position = (500, 500)
     anim.transform.size_mode = SizeMode.Sprite
     anim.transform.scale = 0.5
@@ -73,6 +77,7 @@ def main():
 
     anim2: AnimatedSprite = node_factory.locate_control(AnimatedSprite)
     anim2.name = "anim2"
+    anim2.mouse_interaction = MouseInterraction.Ignore
     anim2.transform.position = (800, 500)
     anim2.transform.size = (128, 128)
     anim2.transform.size_mode = SizeMode.Size
@@ -84,6 +89,7 @@ def main():
     anim2 = None
 
     sprite: Sprite = node_factory.locate_control(Sprite)
+    sprite.mouse_interaction = MouseInterraction.Ignore
     sprite.transform.position = (500, 200)
     sprite.transform.size = (256, 256)
     sprite.sprite = "Human_Portrait"
@@ -92,16 +98,18 @@ def main():
     sprite = None
 
     fps_label: FpsCounter = node_factory.locate_control(FpsCounter)
+    fps_label.mouse_interaction = MouseInterraction.Ignore
     fps_label.transform.position = (SCREEN_WIDTH/2, 60)
     fps_label.transform.size = (SCREEN_WIDTH, 60)
     fps_label.anchor_point = AnchorPoint.Center
     game_tree.add_child(fps_label)
 
     btn: Button = node_factory.locate_control(Button, ["Button"])
+    btn.name = "Button"
     btn.clicked_img = "ButtonPressed"
     btn.pressed_events.append(button_pressed)
     btn.transform.size_mode = SizeMode.Sprite
-    btn.transform.position = (500, 800)
+    btn.transform.position = (800, 800)
     game_tree.add_child(btn)
     
     game_tree.screen.fill((128, 128, 128))
