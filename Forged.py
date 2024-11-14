@@ -105,12 +105,26 @@ def main():
     game_tree.add_child(fps_label)
 
     btn: Button = node_factory.locate_control(Button, ["Button"])
-    btn.name = "Button"
+    btn.name = "btn"
     btn.clicked_img = "ButtonPressed"
+    btn.hovered_img = "ButtonHovered"
+    btn.toggled_img = "ButtonSelected"
+    btn.toggled_hovered_img = "ButtonSelectedHovered"
     btn.pressed_events.append(button_pressed)
     btn.transform.size_mode = SizeMode.Sprite
     btn.transform.position = (800, 800)
     game_tree.add_child(btn)
+    
+    btn2: Button = node_factory.locate_control(Button, ["Button"])
+    btn2.name = "btn2"
+    btn2.clicked_img = "ButtonPressed"
+    btn2.hovered_img = "ButtonHovered"
+    btn2.toggled_img = "ButtonSelected"
+    btn2.toggled_hovered_img = "ButtonSelectedHovered"
+    btn2.transform.size_mode = SizeMode.Sprite
+    btn2.transform.position = (600, 800)
+    btn2.toggable = True
+    game_tree.add_child(btn2)
     
     game_tree.screen.fill((128, 128, 128))
     pygame.display.flip()

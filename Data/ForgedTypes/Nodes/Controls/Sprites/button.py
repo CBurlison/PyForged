@@ -70,6 +70,9 @@ class Button(Sprite):
         pass
 
     def __on_click(self):
+        if self.toggable:
+            self.toggled = not self.toggled
+
         self.sprite = self.clicked_img
         self.set_this_frame = True
         self.pressed()

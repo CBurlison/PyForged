@@ -28,3 +28,7 @@ def create_atlas_animation_frame(img: pygame.Surface, position: tuple[int, int],
 
     return AnimationFrame(frame, frame_duration)
     
+def alter_color(img: pygame.Surface, color: tuple[int, int, int], replace_color: tuple[int, int, int], threshold: tuple[int, int, int] = (0, 0, 0)) -> pygame.Surface:
+    target = img.copy()
+    pygame.transform.threshold(target, img, color, threshold, replace_color, inverse_set=True)
+    return target
