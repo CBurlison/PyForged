@@ -1,17 +1,20 @@
+from Data.sceneManager import SceneManager
 from Data.Factories.nodeFactory import NodeFactory
 from Data.Nodes.Controls.control import Control, AnchorPoint
 from Data.Nodes.Controls.Sprites.sprite import Sprite, SizeMode
 from Data.Nodes.Controls.Sprites.animatedSprite import AnimatedSprite
 from Data.Nodes.Controls.Sprites.button import Button
 from Data.Scenes.ToggleButton.toggleButton import ToggleButton
+from Data.Scenes.FpsCounter.fpsCounter import FpsCounter
 
 class MainMenu(Control):
-    def __init__(self, node_factory: NodeFactory):
+    def __init__(self, node_factory: NodeFactory, scene_manager: SceneManager):
         super().__init__()
         self.name = "MainMenu"
         self.speed: int = 100
 
         self.node_factory: NodeFactory = node_factory
+        self.scene_manager: SceneManager = scene_manager
         self.color = (0, 0, 0)
 
     def setup(self):
@@ -57,6 +60,7 @@ class MainMenu(Control):
 
         btn: Button = self.node_factory.locate_control(Button, ["Button"])
         btn.name = "btn"
+        btn.text = "Sprite"
         btn.clicked_img = "ButtonPressed"
         btn.hovered_img = "ButtonHovered"
         btn.toggled_img = "ButtonSelected"
@@ -67,41 +71,47 @@ class MainMenu(Control):
         self.add_child(btn)
         btn = None
         
-        btn: Button = self.node_factory.locate_control(ToggleButton)
-        btn.name = "btn2"
-        btn.button_group = "main_menu_toggle_buttons"
-        btn.transform.position = (400, 800)
-        btn.toggled = True
-        self.add_child(btn)
-        btn = None
+        btn2: Button = self.node_factory.locate_control(ToggleButton)
+        btn2.name = "btn2"
+        btn2.text = "Reload"
+        btn2.button_group = "main_menu_toggle_buttons"
+        btn2.transform.position = (400, 800)
+        btn2.pressed_events.append(self.__reload_button)
+        self.add_child(btn2)
+        btn2 = None
         
-        btn: Button = self.node_factory.locate_control(ToggleButton)
-        btn.name = "btn3"
-        btn.button_group = "main_menu_toggle_buttons"
-        btn.transform.position = (600, 800)
-        self.add_child(btn)
-        btn = None
+        btn3: Button = self.node_factory.locate_control(ToggleButton)
+        btn3.name = "btn3"
+        btn3.text = "btn3"
+        btn3.button_group = "main_menu_toggle_buttons"
+        btn3.transform.position = (600, 800)
+        btn3.toggled = True
+        self.add_child(btn3)
+        btn3 = None
         
-        btn: Button = self.node_factory.locate_control(ToggleButton)
-        btn.name = "btn4"
-        btn.button_group = "main_menu_toggle_buttons"
-        btn.transform.position = (400, 875)
-        self.add_child(btn)
-        btn = None
+        btn4: Button = self.node_factory.locate_control(ToggleButton)
+        btn4.name = "btn4"
+        btn4.text = "btn4"
+        btn4.button_group = "main_menu_toggle_buttons"
+        btn4.transform.position = (400, 875)
+        self.add_child(btn4)
+        btn4 = None
         
-        btn: Button = self.node_factory.locate_control(ToggleButton)
-        btn.name = "btn5"
-        btn.button_group = "main_menu_toggle_buttons"
-        btn.transform.position = (600, 875)
-        self.add_child(btn)
-        btn = None
+        btn5: Button = self.node_factory.locate_control(ToggleButton)
+        btn5.name = "btn5"
+        btn5.text = "btn5"
+        btn5.button_group = "main_menu_toggle_buttons"
+        btn5.transform.position = (600, 875)
+        self.add_child(btn5)
+        btn5 = None
         
-        btn: Button = self.node_factory.locate_control(ToggleButton)
-        btn.name = "btn6"
-        btn.button_group = "main_menu_toggle_buttons"
-        btn.transform.position = (700, 875)
-        self.add_child(btn)
-        btn = None
+        btn6: Button = self.node_factory.locate_control(ToggleButton)
+        btn6.name = "btn6"
+        btn6.text = "btn6"
+        btn6.button_group = "main_menu_toggle_buttons"
+        btn6.transform.position = (700, 875)
+        self.add_child(btn6)
+        btn6 = None
     
     def __loop_10_free(self, anim: AnimatedSprite):
         if anim.loop_count == 2:
@@ -115,3 +125,7 @@ class MainMenu(Control):
         
             if node is not None:
                 node.queue_free()
+
+    def __reload_button(self, btn: Button):
+        self.scene_manager.change_scene(MainMenu)
+        _ = self.scene_manager.add_scene(FpsCounter)

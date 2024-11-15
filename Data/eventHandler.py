@@ -102,7 +102,7 @@ class EventHandler:
         new_id = self.__map_input(input_key)
         new_event = KeyPresskEvent(control, new_id, input_time, input_event)
         DictHelper.insert_2(self.__key_events, 0, new_id, input_time, new_event)
-        control.key_press_event_storage.append(new_event)
+        control.key_press_event_storage[new_event.id] = new_event
         return new_event
 
     def remove_event(self, input_event: KeyPresskEvent):
@@ -112,7 +112,7 @@ class EventHandler:
     def add_custom_event(self, control, event_id: int, custom_event) -> CustomEvent:
         new_event = CustomEvent(control, event_id, custom_event)
         DictHelper.insert(self.__custom_events, 0, event_id, new_event)
-        control.custom_event_storage.append(new_event)
+        control.custom_event_storage[new_event.id] = new_event
         return new_event
 
     def remove_custom_event(self, custom_event: CustomEvent):
@@ -122,7 +122,7 @@ class EventHandler:
     def add_mouse_motion_event(self, control, input_event) -> MouseMoveEvent:
         new_event = MouseMoveEvent(control, input_event)
         self.__mouse_motion_events.insert(0, new_event)
-        control.mouse_move_event_storage.append(new_event)
+        control.mouse_move_event_storage[new_event.id] = new_event
         return new_event
 
     def remove_mouse_motion_event(self, input_event: MouseMoveEvent):
@@ -133,7 +133,7 @@ class EventHandler:
     def add_movement_event(self, control, input_event) -> MovementEvent:
         new_event = MovementEvent(control, input_event)
         self.__movement_events.insert(0, new_event)
-        control.movement_event_storage.append(new_event)
+        control.movement_event_storage[new_event.id] = new_event
         return new_event
 
     def remove_movement_event(self, input_event: MovementEvent):
@@ -144,14 +144,13 @@ class EventHandler:
     def add_mousebutton_event(self, control, input_key: int, input_time: InputTime, input_event) -> MouseClickEvent:
         new_event = MouseClickEvent(control, input_key, input_time, input_event)
         DictHelper.insert_2(self.__mouse_button_events, 0, input_key, input_time, new_event)
-        control.mouse_click_event_storage.append(new_event)
+        control.mouse_click_event_storage[new_event.id] = new_event
         return new_event
 
     def remove_mousebutton_event(self, input_key: MouseClickEvent):
-        DictHelper.remove_list_2(self.__mouse_button_events, input_key, input_key.input_time, input_key)
+        DictHelper.remove_list_2(self.__mouse_button_events, input_key.button, input_key.input_time, input_key)
 
-    def process_frame_events(self) -> bool:
-        self.__process_mouse_move()
+    def process_input_events(self) -> bool:
         self.__process_movement()
 
         new_events: list[uuid.UUID] = []
@@ -189,7 +188,7 @@ class EventHandler:
 
         self.build_button_groups = False
 
-    def __process_mouse_move(self):
+    def process_mouse_move(self):
         new_pos = pygame.mouse.get_pos()
 
         if self.mouse_pos != new_pos:

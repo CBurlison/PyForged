@@ -117,6 +117,9 @@ Called prior to .exit_tree(delta)."""
         if self.freed:
             return
 
+        for child in self.children:
+            child.free()
+
         self.game_tree.clear_node_groups()
         self.internal_exit_tree()
         self.exit_tree()
@@ -126,9 +129,6 @@ Called prior to .exit_tree(delta)."""
         if self.parent is not None:
             self.parent.remove_child(self)
             
-        for child in self.children:
-            child.free()
-
     def queue_free(self):
         """Queue the free() action to be run at the end of the current frame. """
         if self.freed:

@@ -1,5 +1,6 @@
 import pygame
 import typing
+import uuid
 
 from Data.Nodes.node import Node
 from Data.Models.inputState import InputState
@@ -40,11 +41,11 @@ class Control(Node):
         self.mouse_entered_events: list[typing.Any] = []
         self.mouse_exited_events: list[typing.Any] = []
 
-        self.mouse_click_event_storage: list[MouseClickEvent] = []
-        self.mouse_move_event_storage: list[MouseMoveEvent] = []
-        self.movement_event_storage: list[MovementEvent] = []
-        self.key_press_event_storage: list[KeyPresskEvent] = []
-        self.custom_event_storage: list[CustomEvent] = []
+        self.mouse_click_event_storage: dict[uuid.UUID, MouseClickEvent] = {}
+        self.mouse_move_event_storage: dict[uuid.UUID, MouseMoveEvent] = {}
+        self.movement_event_storage: dict[uuid.UUID, MovementEvent] = {}
+        self.key_press_event_storage: dict[uuid.UUID, KeyPresskEvent] = {}
+        self.custom_event_storage: dict[uuid.UUID, CustomEvent] = {}
 
         self.mouse_interaction: MouseInterraction = MouseInterraction.Ignore
         self.mouse_inside: bool = False
@@ -135,27 +136,27 @@ class Control(Node):
         if self.freed:
             return
 
-        for ev in self.mouse_click_event_storage:
+        for ev in self.mouse_click_event_storage.values():
             self.event_handler.remove_mousebutton_event(ev)
 
-        for ev in self.custom_event_storage:
+        for ev in self.custom_event_storage.values():
             self.event_handler.remove_custom_event(ev)
 
-        for ev in self.movement_event_storage:
+        for ev in self.movement_event_storage.values():
             self.event_handler.remove_movement_event(ev)
 
-        for ev in self.key_press_event_storage:
+        for ev in self.key_press_event_storage.values():
             self.event_handler.remove_event(ev)
 
-        for ev in self.mouse_move_event_storage:
+        for ev in self.mouse_move_event_storage.values():
             self.event_handler.remove_mouse_motion_event(ev)
 
         super().free()
     
     def draw(self):
         if self.surface is not None and self.screen is not None:
-            #self.screen.blit(self.surface, self.calc_anchor_point())
-            self.screen.blit(self.surface, self.transform.position)
+            self.screen.blit(self.surface, self.calc_anchor_point())
+            #self.screen.blit(self.surface, self.transform.position)
 
         self.draw_children(self)
         
@@ -172,51 +173,51 @@ class Control(Node):
 
     def __anchor_top_center(self) -> tuple[int, int]:
         adj_x = self.transform.position[0]
-        if self.rect.w > 0:
-            adj_x -= int(self.rect.w / 2)
+        if self.transform.size[0] > 0:
+            adj_x -= int(self.transform.size[0] / 2)
         return (adj_x, self.transform.position[1])
 
     def __anchor_top_right(self) -> tuple[int, int]:
         adj_x = self.transform.position[0]
-        if self.rect.w > 0:
-            adj_x -= int(self.rect.w / 2)
-        return (self.transform.position[0] - self.rect.w, self.transform.position[1])
+        if self.transform.size[0] > 0:
+            adj_x -= int(self.transform.size[0] / 2)
+        return (self.transform.position[0] - self.transform.size[0], self.transform.position[1])
 
     def __anchor_left_center(self) -> tuple[int, int]:
         adj_y = self.transform.position[1]
-        if self.rect.h > 0:
-            adj_y -= int(self.rect.h / 2)
+        if self.transform.size[1] > 0:
+            adj_y -= int(self.transform.size[1] / 2)
         return (self.transform.position[0], adj_y)
 
     def __anchor_center(self) -> tuple[int, int]:
         adj_x = self.transform.position[0]
-        if self.rect.w > 0:
-            adj_x -= int(self.rect.w / 2)
+        if self.transform.size[0] > 0:
+            adj_x -= int(self.transform.size[0] / 2)
 
         adj_y = self.transform.position[1]
-        if self.rect.h > 0:
-            adj_y -= int(self.rect.h / 2)
+        if self.transform.size[1] > 0:
+            adj_y -= int(self.transform.size[1] / 2)
 
         return (adj_x, adj_y)
 
     def __anchor_right_center(self) -> tuple[int, int]:
         adj_y = self.transform.position[1]
-        if self.rect.h > 0:
-            adj_y -= int(self.rect.h / 2)
+        if self.transform.size[1] > 0:
+            adj_y -= int(self.transform.size[1] / 2)
 
-        return (self.transform.position[0] - self.rect.w, adj_y)
+        return (self.transform.position[0] - self.transform.size[0], adj_y)
 
     def __anchor_bottom_left(self) -> tuple[int, int]:
-        return (self.transform.position[0], self.transform.position[1] - self.rect.h)
+        return (self.transform.position[0], self.transform.position[1] - self.transform.size[1])
 
     def __anchor_bottom_center(self) -> tuple[int, int]:
         adj_x = self.transform.position[0]
-        if self.rect.w > 0:
-            adj_x -= int(self.rect.w / 2)
-        return (adj_x, self.transform.position[1] - self.rect.h)
+        if self.transform.size[0] > 0:
+            adj_x -= int(self.transform.size[0] / 2)
+        return (adj_x, self.transform.position[1] - self.transform.size[1])
 
     def __anchor_bottom_right(self) -> tuple[int, int]:
-        return (self.transform.position[0] - self.rect.w, self.transform.position[1] - self.rect.h)
+        return (self.transform.position[0] - self.transform.size[0], self.transform.position[1] - self.transform.size[1])
 
     ################################################################################################
     #   Anchor Rect methods

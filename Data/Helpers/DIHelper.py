@@ -3,6 +3,7 @@ import Data.Scenes.FpsCounter.fpsCounter as fpsCounter
 import Data.Scenes.ToggleButton.toggleButton as toggleButton
 import Data.Nodes.Controls.label as label
 from Data.PythonDI import DIContainer
+from Data.sceneManager import SceneManager
 from Data.Models.transform import Transform
 from Data.Nodes.Controls.Sprites.sprite import Sprite
 from Data.Nodes.Controls.Sprites.animatedSprite import AnimatedSprite
@@ -22,3 +23,4 @@ def register_nodes(di_container: DIContainer):
     di_container.register(Transform)
     di_container.register(Button)
     di_container.register(toggleButton.ToggleButton)
+    di_container.register(SceneManager)

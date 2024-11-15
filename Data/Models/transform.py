@@ -23,3 +23,10 @@ class Transform:
         if self.owner is not None and self.owner.surface is not None:
             self.owner.set_rect()
         
+    def copy(self) -> "Transform":
+        cpy = Transform()
+        cpy.size_mode = self.size_mode
+        cpy.scale = self.scale
+        cpy.size = (self.size[0], self.size[1])
+        cpy.position = (self.position[0], self.position[1])
+        return cpy

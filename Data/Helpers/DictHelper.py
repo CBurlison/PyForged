@@ -21,12 +21,41 @@ def add_2(mod_dict: dict[typing.Any, dict[typing.Any, typing.Any]], key_1, key_2
 
 def remove_2(mod_dict: dict[typing.Any, dict[typing.Any, typing.Any]], key_1, key_2):
     if key_1 not in mod_dict:
-        mod_dict[key_1] = {}
+        return
     
     key_items = mod_dict[key_1]
 
     if key_2 in key_items:
         key_items.pop(key_2)
+
+    if len(key_items) == 0:
+        mod_dict.pop(key_1)
+
+def add_3(mod_dict: dict[typing.Any, dict[typing.Any, dict[typing.Any, typing.Any]]], key_1, key_2, key_3, new_value):
+    if key_1 not in mod_dict:
+        mod_dict[key_1] = {}
+    
+    item = mod_dict[key_1]
+
+    if key_1 not in item:
+        item[key_2] = {}
+
+    item[key_2][key_3] = new_value
+
+def remove_3(mod_dict: dict[typing.Any, dict[typing.Any, dict[typing.Any, typing.Any]]], key_1, key_2, key_3):
+    if key_1 not in mod_dict:
+        return
+    
+    key_items = mod_dict[key_1]
+
+    if key_2 in key_items:
+        key_items_2 = mod_dict[key_1]
+
+        if key_3 in key_items_2:
+            key_items_2.pop(key_3)
+
+        if len(key_items_2) == 0:
+            key_items.pop(key_2)
 
     if len(key_items) == 0:
         mod_dict.pop(key_1)
@@ -44,7 +73,7 @@ def add_list_2(mod_dict: dict[typing.Any, dict[typing.Any, list[typing.Any]]], k
 
 def remove_list_2(mod_dict: dict[typing.Any, dict[typing.Any, list[typing.Any]]], key_1, key_2, new_value):
     if key_1 not in mod_dict:
-        mod_dict[key_1] = {}
+        return
     
     key_items = mod_dict[key_1]
 

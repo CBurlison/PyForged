@@ -37,7 +37,7 @@ class Label(Control):
         if self.text != "":
             self.update_surface()
 
-    def update_surface(self):
+    def update_surface(self, force: bool = False):
         if self.font_info.outline > 0:
             self.surface = self.text_outline(self.font, self.text, self.font_info.color, self.font_info.outline_color)
         else:
@@ -57,7 +57,12 @@ class Label(Control):
         img.blit(base, (0, self.font_info.outline))
         img.blit(base, (self.font_info.outline, self.font_info.outline))
         img.set_colorkey(true_black)
-        base.set_palette_at(1, notcolor)
+
+        try:
+            base.set_palette_at(1, notcolor)
+        except(pygame.error):
+            pass
+
         img.blit(base, (self.font_info.outline, self.font_info.outline))
         img.set_colorkey(notcolor)
         return img

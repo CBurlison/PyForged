@@ -1,6 +1,7 @@
 import pygame
 from Data.PythonDI import DIContainer
 from Data.eventHandler import EventHandler
+from Data.sceneManager import SceneManager
 from Data.Nodes.tree import Tree
 from Data.Models.gameState import GameState
 from Data.Helpers import DIHelper
@@ -11,7 +12,6 @@ from Data.GameData.imageStore import ImageStore
 from Data.GameData.animationStore import AnimationStore
 from Data.Nodes.node import Node
 from Data.Nodes.Controls.Sprites.button import Button
-from Data.Nodes.Controls.control import AnchorPoint
 from Data.Models.inputState import InputState
 
 def is_button(search_node: Node) -> bool:
@@ -66,14 +66,15 @@ def main():
     scene_node: Node = node_factory.locate_control(Node)
     scene_node.name = "SceneNode"
     game_tree.add_child(scene_node)
-    scene_node.add_child(node_factory.locate_control(MainMenu))
+    
+    di_container.register_instance(SceneManager)
+    scene_manager: SceneManager = node_factory.locate_node(SceneManager)
+    scene_manager.more_setup()
+
+    scene_manager.change_scene(MainMenu)
     game_data: GameState = di_container.locate(GameState)
     
-    fps_label: FpsCounter = node_factory.locate_control(FpsCounter)
-    fps_label.transform.position = (SCREEN_WIDTH/2, 60)
-    fps_label.transform.size = (SCREEN_WIDTH, 60)
-    fps_label.anchor_point = AnchorPoint.Center
-    game_tree.add_child(fps_label)
+    _ = scene_manager.add_scene(FpsCounter)
 
     game_tree.screen.fill((128, 128, 128))
     pygame.display.flip()
@@ -82,6 +83,7 @@ def main():
     # Get rid of all of the references we no longer need
     node_factory = None
     scene_node = None
+    scene_manager = None
 
     update_groups(event_handler, game_tree)
 
@@ -90,10 +92,12 @@ def main():
         game_data.delta = calc_delta_sec(game_clock.get_time())
         game_tree.screen.fill((128, 128, 128))
 
-        if not event_handler.process_frame_events():
+        event_handler.process_mouse_move()
+        game_tree.check_mouse_over(event_handler.mouse_pos, InputState())
+
+        if not event_handler.process_input_events():
             break
        
-        game_tree.check_mouse_over(event_handler.mouse_pos, InputState())
         game_tree.process_children(game_tree, game_data.delta)
 
         game_tree.run_queue_events()
@@ -105,7 +109,6 @@ def main():
         # Flip the display
         pygame.display.update()
         game_clock.tick(game_data.FPS)
-
 
     # Done! Time to quit.
     pygame.quit()
