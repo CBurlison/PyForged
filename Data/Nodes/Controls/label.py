@@ -76,3 +76,10 @@ class Label(Control):
         img.blit(base, (self.font_info.outline, self.font_info.outline))
         img.set_colorkey(true_black)
         return img
+    
+    def free(self):
+        super().free()
+
+        self.__text = None
+        self.__font_info = None
+        self.font = None

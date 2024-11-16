@@ -33,11 +33,11 @@ class Node:
         self.game_state: GameState = None
 
     @property
-    def group(self) -> str | None:
+    def group(self) -> str:
         return self.__group
     
     @group.setter
-    def group(self, new_group: str | None):
+    def group(self, new_group: str):
         self.__group = new_group
         
         if self.game_tree is not None:
@@ -128,6 +128,19 @@ Called prior to .exit_tree(delta)."""
 
         if self.parent is not None:
             self.parent.remove_child(self)
+
+        self.parent  = None
+        self.children.clear()
+        self.children = None
+        self.surface = None
+        self.rect = None
+        self.transform = None
+        self.color = None
+        self.__group = None
+        self.game_tree = None
+        self.screen = None
+        self.screen_rect = None
+        self.game_state = None
             
     def queue_free(self):
         """Queue the free() action to be run at the end of the current frame. """

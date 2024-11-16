@@ -148,3 +148,23 @@ class AnimatedSprite(Control):
     def __change_frame(self, frame: int):
         self.current_frame = self.current_animation.frames[frame]
         self.update_surface(True)
+
+    def free(self):
+        super().free()
+
+        self.current_animation = None
+        self.current_frame = None
+
+        self.animation_start_events.clear()
+        self.animation_start_events = None
+
+        self.animation_end_events.clear()
+        self.animation_end_events = None
+        
+        self.animation_loop_events.clear()
+        self.animation_loop_events = None
+
+        self.animation = None
+        self.animations.clear()
+
+        self.animation_store = None

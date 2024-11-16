@@ -46,3 +46,9 @@ class Sprite(Control):
             self.set_rect()
         
         self.surface.set_colorkey(self.color)
+
+    def free(self):
+        super().free()
+
+        self.__sprite = None
+        self.image_store = None

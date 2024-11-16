@@ -72,22 +72,22 @@ class Button(Sprite):
                     btn.toggled = False
 
     @property
-    def button_group(self) -> str | None:
+    def button_group(self) -> str:
         return self.__button_group
     
     @button_group.setter
-    def button_group(self, new_group: str | None):
+    def button_group(self, new_group: str):
         self.__button_group = new_group
         
         if self.event_handler is not None:
             self.event_handler.clear_button_groups()
 
     @property
-    def text(self) -> str | None:
+    def text(self) -> str:
         return self.__text
     
     @text.setter
-    def text(self, new_text: str | None):
+    def text(self, new_text: str):
         self.__text = new_text
         self.label.text = self.__text
 
@@ -150,6 +150,24 @@ class Button(Sprite):
     def free(self):
         self.event_handler.clear_button_groups()
         super().free()
+
+        self.label = None
+        self.__button_group = None
+        self.__text = None
+
+        self.default_img = None
+        self.hovered_img = None
+        self.clicked_img = None
+        self.toggled_img = None
+        self.toggled_hovered_img = None
+
+        self.node_factory = None
+
+        self.pressed_events.clear()
+        self.pressed_events = None
+
+        self.held_events.clear()
+        self.held_events = None
 
     def internal_enter_tree(self):
         super().internal_enter_tree()

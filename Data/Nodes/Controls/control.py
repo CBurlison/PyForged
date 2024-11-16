@@ -138,20 +138,44 @@ class Control(Node):
 
         for ev in self.mouse_click_event_storage.values():
             self.event_handler.remove_mousebutton_event(ev)
+        self.mouse_click_event_storage.clear()
+        self.mouse_click_event_storage = None
 
         for ev in self.custom_event_storage.values():
             self.event_handler.remove_custom_event(ev)
+        self.custom_event_storage.clear()
+        self.custom_event_storage = None
 
         for ev in self.movement_event_storage.values():
             self.event_handler.remove_movement_event(ev)
+        self.movement_event_storage.clear()
+        self.movement_event_storage = None
 
         for ev in self.key_press_event_storage.values():
-            self.event_handler.remove_event(ev)
+            self.event_handler.remove_event(ev)     
+        self.key_press_event_storage.clear()
+        self.key_press_event_storage = None
 
         for ev in self.mouse_move_event_storage.values():
             self.event_handler.remove_mouse_motion_event(ev)
+        self.mouse_move_event_storage.clear()
+        self.mouse_move_event_storage = None
 
         super().free()
+
+        self.calc_anchor_point = None
+        self.calc_anchor_point_rect = None
+
+        self.mouse_entered_events.clear()
+        self.mouse_entered_events = None
+
+        self.mouse_exited_events.clear()
+        self.mouse_exited_events = None
+
+        ################################################################################################
+        #   set in Factory
+        ################################################################################################
+        self.event_handler: EventHandler
     
     def draw(self):
         if self.surface is not None and self.screen is not None:

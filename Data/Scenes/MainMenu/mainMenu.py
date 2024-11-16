@@ -128,4 +128,4 @@ class MainMenu(Control):
 
     def __reload_button(self, btn: Button):
         self.scene_manager.change_scene(MainMenu)
-        _ = self.scene_manager.add_scene(FpsCounter)
+        self.scene_manager.add_scene(FpsCounter)
