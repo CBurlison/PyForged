@@ -197,50 +197,50 @@ class Control(Node):
     def __anchor_top_center(self) -> tuple[int, int]:
         adj_x = self.transform.position[0]
         if self.transform.size[0] > 0:
-            adj_x -= int(self.transform.size[0] / 2)
+            adj_x += int(self.transform.size[0] / 2)
         return (adj_x, self.transform.position[1])
 
     def __anchor_top_right(self) -> tuple[int, int]:
         adj_x = self.transform.position[0]
         if self.transform.size[0] > 0:
-            adj_x -= int(self.transform.size[0] / 2)
-        return (self.transform.position[0] - self.transform.size[0], self.transform.position[1])
+            adj_x += int(self.transform.size[0] / 2)
+        return (self.transform.position[0] + self.transform.size[0], self.transform.position[1])
 
     def __anchor_left_center(self) -> tuple[int, int]:
         adj_y = self.transform.position[1]
         if self.transform.size[1] > 0:
-            adj_y -= int(self.transform.size[1] / 2)
+            adj_y += int(self.transform.size[1] / 2)
         return (self.transform.position[0], adj_y)
 
     def __anchor_center(self) -> tuple[int, int]:
         adj_x = self.transform.position[0]
         if self.transform.size[0] > 0:
-            adj_x -= int(self.transform.size[0] / 2)
+            adj_x += int(self.transform.size[0] / 2)
 
         adj_y = self.transform.position[1]
         if self.transform.size[1] > 0:
-            adj_y -= int(self.transform.size[1] / 2)
+            adj_y += int(self.transform.size[1] / 2)
 
         return (adj_x, adj_y)
 
     def __anchor_right_center(self) -> tuple[int, int]:
         adj_y = self.transform.position[1]
         if self.transform.size[1] > 0:
-            adj_y -= int(self.transform.size[1] / 2)
+            adj_y += int(self.transform.size[1] / 2)
 
-        return (self.transform.position[0] - self.transform.size[0], adj_y)
+        return (self.transform.position[0] + self.transform.size[0], adj_y)
 
     def __anchor_bottom_left(self) -> tuple[int, int]:
-        return (self.transform.position[0], self.transform.position[1] - self.transform.size[1])
+        return (self.transform.position[0], self.transform.position[1] + self.transform.size[1])
 
     def __anchor_bottom_center(self) -> tuple[int, int]:
         adj_x = self.transform.position[0]
         if self.transform.size[0] > 0:
-            adj_x -= int(self.transform.size[0] / 2)
-        return (adj_x, self.transform.position[1] - self.transform.size[1])
+            adj_x += int(self.transform.size[0] / 2)
+        return (adj_x, self.transform.position[1] + self.transform.size[1])
 
     def __anchor_bottom_right(self) -> tuple[int, int]:
-        return (self.transform.position[0] - self.transform.size[0], self.transform.position[1] - self.transform.size[1])
+        return (self.transform.position[0] + self.transform.size[0], self.transform.position[1] + self.transform.size[1])
 
     ################################################################################################
     #   Anchor Rect methods

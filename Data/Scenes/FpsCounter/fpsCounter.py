@@ -11,8 +11,8 @@ class FpsCounter(Label):
     def setup(self):
         super().setup()
         self.transform.position = (0, 60)
-        self.transform.size = (self.screen_rect.w, 60)
-        self.anchor_point = AnchorPoint.Center
+        self.transform.size = (1920, 60)
+        self.anchor_point = AnchorPoint.TopCenter
     
     def process(self, delta: float):
         super().process(delta)

@@ -5,7 +5,6 @@ from Data.Nodes.Controls.Sprites.sprite import Sprite, SizeMode
 from Data.Nodes.Controls.Sprites.animatedSprite import AnimatedSprite
 from Data.Nodes.Controls.Sprites.button import Button
 from Data.Scenes.ToggleButton.toggleButton import ToggleButton
-from Data.Scenes.FpsCounter.fpsCounter import FpsCounter
 
 class MainMenu(Control):
     def __init__(self, node_factory: NodeFactory, scene_manager: SceneManager):
@@ -125,4 +124,3 @@ class MainMenu(Control):
 
     def __reload_button(self, btn: Button):
         self.scene_manager.change_scene(MainMenu)
-        self.scene_manager.add_scene(FpsCounter)

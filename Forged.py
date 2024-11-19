@@ -35,14 +35,12 @@ def main():
     
     di_container = DIContainer()
     di_container.register_instance(DIContainer, di_container)
+    
+    DIHelper.register_nodes(di_container)
 
-    di_container.register_instance(NodeFactory)
     node_factory: NodeFactory = di_container.locate(NodeFactory)
 
     di_container.register_instance(pygame.time.Clock, game_clock)
-    di_container.register_instance(GameState)
-
-    DIHelper.register_nodes(di_container)
 
     event_handler = EventHandler()
     di_container.register_instance(EventHandler, event_handler)
@@ -50,7 +48,6 @@ def main():
     # Set up the drawing window
     di_container.register_instance(pygame.Surface, pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)))
     di_container.register_instance(ImageStore, ImageStore())
-    di_container.register_instance(AnimationStore)
     _ = di_container.locate(AnimationStore)
     
     game_tree = node_factory.locate_node(Tree)
@@ -67,14 +64,13 @@ def main():
     scene_node.name = "SceneNode"
     game_tree.add_child(scene_node)
     
-    di_container.register_instance(SceneManager)
     scene_manager: SceneManager = node_factory.locate_node(SceneManager)
     scene_manager.more_setup()
 
     scene_manager.change_scene(MainMenu)
     game_data: GameState = di_container.locate(GameState)
     
-    _ = scene_manager.add_scene(FpsCounter)
+    game_tree.add_child(node_factory.locate_control(FpsCounter))
 
     game_tree.screen.fill((128, 128, 128))
     pygame.display.flip()
