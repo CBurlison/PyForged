@@ -118,13 +118,10 @@ class MainMenu(Control):
             anim.queue_free()
 
     def __button_pressed(self, btn: Button):
-        node = btn.parent
+        node = self.get_node("anim2")
         
         if node is not None:
-            node = node.get_node("anim2")
-        
-            if node is not None:
-                node.queue_free()
+            node.queue_free()
 
     def __reload_button(self, btn: Button):
         self.scene_manager.change_scene(MainMenu)

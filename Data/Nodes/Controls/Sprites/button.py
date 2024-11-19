@@ -123,8 +123,8 @@ class Button(Sprite):
         if self.toggable:
             self.toggled = not self.toggled
 
-        if not self.toggled:
-            return
+            if not self.toggled:
+                return
 
         self.sprite = self.clicked_img
         self.set_this_frame = True
