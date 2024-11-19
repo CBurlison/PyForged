@@ -114,10 +114,9 @@ Called prior to .exit_tree(delta)."""
 
     def free(self):
         """Removes this node from its parent and the tree. calls exit tree events"""
-        if self.freed:
-            return
+        free_nodes = self.children.copy()
 
-        for child in self.children:
+        for child in free_nodes:
             child.free()
 
         self.game_tree.clear_node_groups()
@@ -125,6 +124,7 @@ Called prior to .exit_tree(delta)."""
         self.exit_tree()
         self.game_tree.exit_tree_events(self)
         self.freed = True
+        self.visible = False
 
         if self.parent is not None:
             self.parent.remove_child(self)

@@ -84,6 +84,12 @@ class EventHandler:
         self.__movement_events: list[MovementEvent] = []
         self.__custom_events: dict[int, list[CustomEvent]] = {}
 
+        self.__remove_key_events: list[KeyPresskEvent] = []
+        self.__remove_mouse_button_events: list[MouseClickEvent] = []
+        self.__remove_mouse_motion_events: list[MouseMoveEvent] = []
+        self.__remove_movement_events: list[MovementEvent] = []
+        self.__remove_custom_events: list[CustomEvent]= []
+
         self.__key_time_cache: dict[uuid.UUID, int] = {}
         self.__mouse_time_cache: dict[int, int] = {}
 
@@ -106,6 +112,9 @@ class EventHandler:
         return new_event
 
     def remove_event(self, input_event: KeyPresskEvent):
+        self.__remove_key_events.append(input_event)
+
+    def __remove_event(self, input_event: KeyPresskEvent):
         DictHelper.remove_list_2(self.__key_events, input_event.input_id, input_event.input_time, input_event)
 
     # custom events
@@ -116,6 +125,9 @@ class EventHandler:
         return new_event
 
     def remove_custom_event(self, custom_event: CustomEvent):
+        self.__remove_custom_events.append(custom_event)
+
+    def __remove_custom_event(self, custom_event: CustomEvent):
         DictHelper.remove_list(self.__custom_events, custom_event.event_id, custom_event.custom_event)
 
     # mouse motion events
@@ -126,6 +138,9 @@ class EventHandler:
         return new_event
 
     def remove_mouse_motion_event(self, input_event: MouseMoveEvent):
+        self.__remove_mouse_motion_events.append(input_event)
+
+    def __remove_mouse_motion_event(self, input_event: MouseMoveEvent):
         if input_event in self.__mouse_motion_events:
             self.__mouse_motion_events.remove(input_event)
 
@@ -137,6 +152,9 @@ class EventHandler:
         return new_event
 
     def remove_movement_event(self, input_event: MovementEvent):
+        self.__remove_movement_events.append(input_event)
+
+    def __remove_movement_event(self, input_event: MovementEvent):
         if input_event in self.__movement_events:
             self.__movement_events.remove(input_event)
 
@@ -148,6 +166,9 @@ class EventHandler:
         return new_event
 
     def remove_mousebutton_event(self, input_key: MouseClickEvent):
+        self.__remove_mouse_button_events.append(input_key)
+
+    def __remove_mousebutton_event(self, input_key: MouseClickEvent):
         DictHelper.remove_list_2(self.__mouse_button_events, input_key.button, input_key.input_time, input_key)
 
     def process_input_events(self) -> bool:
@@ -161,6 +182,26 @@ class EventHandler:
 
         self.__process_pressed_events(new_events)
         self.__process_mousebuttonpressed_events(new_mouse_events)
+
+        for ev in self.__remove_key_events:
+            self.__remove_event(ev)
+        self.__remove_key_events.clear()
+
+        for ev in self.__remove_custom_events:
+            self.__remove_custom_event(ev)
+        self.__remove_custom_events.clear()
+
+        for ev in self.__remove_mouse_motion_events:
+            self.__remove_mouse_motion_event(ev)
+        self.__remove_mouse_motion_events.clear()
+
+        for ev in self.__remove_movement_events:
+            self.__remove_movement_event(ev)
+        self.__remove_movement_events.clear()
+
+        for ev in self.__remove_mouse_button_events:
+            self.__remove_mousebutton_event(ev)
+        self.__remove_mouse_button_events.clear()
 
         return True
     
@@ -242,7 +283,7 @@ class EventHandler:
         if event.key not in KeyMap.key_map:
             return
 
-        for reg_key in self.__key_events:
+        for reg_key in self.__custom_events:
             reg_event = self.__input_map.get(reg_key)
 
             if reg_event == event:
@@ -250,7 +291,7 @@ class EventHandler:
                 
                 if count == 1:
                     new_events.append(reg_event)
-                    self.__process_events(self.__key_events, reg_key, InputTime.JustPressed)
+                    self.__process_events(self.__custom_events, reg_key, InputTime.JustPressed)
 
     def __process_keyup_event(self, event: pygame.event.Event):
         if event.key not in KeyMap.key_map:
@@ -321,7 +362,7 @@ class EventHandler:
         event_list = events_by_time[input_time]
 
         for ev in event_list:
-            if not ev.control.freed and ev.control.mouse_inside and ev.click_event():
+            if ev.control.visible and not ev.control.freed and ev.control.mouse_inside and ev.click_event():
                 break
 
     def __process_movement(self):

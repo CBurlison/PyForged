@@ -133,8 +133,7 @@ class Control(Node):
                 self.__mouse_exited()
     
     def free(self):
-        if self.freed:
-            return
+        self.mouse_inside = False
 
         for ev in self.mouse_click_event_storage.values():
             self.event_handler.remove_mousebutton_event(ev)

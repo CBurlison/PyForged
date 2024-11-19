@@ -19,6 +19,8 @@ class SceneManager(Node):
         for child in free_nodes:
             child.free()
 
+        self.__scene_node.children.clear()
+
         self.add_scene(scene)
 
     def queue_change_scene(self, scene: type):
