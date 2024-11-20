@@ -29,6 +29,7 @@ def main():
 
     SCREEN_WIDTH = 1920
     SCREEN_HEIGHT = 1080
+    BLANK_SCREEN = (128, 128, 128)
     
     game_clock = pygame.time.Clock()
     game_clock.tick(60)
@@ -72,7 +73,7 @@ def main():
     
     game_tree.add_child(node_factory.locate_control(FpsCounter))
 
-    game_tree.screen.fill((128, 128, 128))
+    game_tree.screen.fill(BLANK_SCREEN)
     pygame.display.flip()
     game_clock.tick(game_data.FPS)
 
@@ -86,7 +87,7 @@ def main():
     # Main game loop
     while True:
         game_data.delta = calc_delta_sec(game_clock.get_time())
-        game_tree.screen.fill((128, 128, 128))
+        game_tree.screen.fill(BLANK_SCREEN)
 
         event_handler.process_mouse_move()
         game_tree.check_mouse_over(event_handler.mouse_pos, InputState())

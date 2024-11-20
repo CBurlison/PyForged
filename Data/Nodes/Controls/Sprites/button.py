@@ -116,6 +116,10 @@ class Button(Sprite):
         self.sprite = self.default_img
         self.set_this_frame = False
 
+    def press(self):
+        """Trigger a button press"""
+        self.__on_click()
+
     def pressed(self):
         pass
 
