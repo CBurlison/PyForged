@@ -20,9 +20,9 @@ class AnimatedSprite(Control):
         self.current_frame: AnimationFrame = None
         self.current_animation_length: int = 0
 
-        self.animation_start_events: list[typing.Any] = []
-        self.animation_end_events: list[typing.Any] = []
-        self.animation_loop_events: list[typing.Any] = []
+        self.animation_start_events: list[typing.Callable[["AnimatedSprite", bool], None]] = []
+        self.animation_end_events: list[typing.Callable[["AnimatedSprite", bool], None]] = []
+        self.animation_loop_events: list[typing.Callable[["AnimatedSprite"], None]] = []
 
         self.frame: int = 0
         self.animation: str = ""
@@ -141,7 +141,7 @@ class AnimatedSprite(Control):
         for ev in self.animation_loop_events:
             ev(self)
 
-    def __trigger_events(self, events: list[typing.Any], start_end: bool):
+    def __trigger_events(self, events: list[typing.Callable[["AnimatedSprite", bool], None]], start_end: bool):
         for ev in events:
             ev(self, start_end)
 

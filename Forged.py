@@ -54,10 +54,10 @@ def main():
     game_tree = node_factory.locate_node(Tree)
     di_container.register_instance(Tree, game_tree)
 
+    # EventHandler doesnt have access to the tree for things. Give it what it needs here
     def update_button_groups():
         event_handler.update_button_groups(game_tree.get_nodes(is_button))
 
-    # EventHandler doesnt have access to the tree for things. Give it what it needs here
     event_handler.update_button_groups_func = update_button_groups
 
     # Final step before starting game loop

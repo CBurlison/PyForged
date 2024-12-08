@@ -38,8 +38,8 @@ class Control(Node):
         self.calc_anchor_point = self.__anchor_top_left
         self.calc_anchor_point_rect = self.__anchor_top_left_rect
 
-        self.mouse_entered_events: list[typing.Any] = []
-        self.mouse_exited_events: list[typing.Any] = []
+        self.mouse_entered_events: list[typing.Callable[[], None]] = []
+        self.mouse_exited_events: list[typing.Callable[[], None]] = []
 
         self.mouse_click_event_storage: dict[uuid.UUID, MouseClickEvent] = {}
         self.mouse_move_event_storage: dict[uuid.UUID, MouseMoveEvent] = {}
@@ -171,12 +171,12 @@ class Control(Node):
         self.mouse_exited_events.clear()
         self.mouse_exited_events = None
 
-        ################################################################################################
-        #   set in Factory
-        ################################################################################################
-        self.event_handler: EventHandler
+        self.event_handler = None
     
     def draw(self):
+        if self.freed or not self.visible:
+            return
+
         if self.surface is not None and self.screen is not None:
             self.screen.blit(self.surface, self.calc_anchor_point())
             #self.screen.blit(self.surface, self.transform.position)

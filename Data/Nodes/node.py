@@ -1,4 +1,5 @@
 import pygame
+import typing
 from Data.Models.gameState import GameState
 from Data.Models.queuedEvent import QueuedEvent
 from Data.Models.transform import Transform
@@ -238,7 +239,7 @@ Called prior to .exit_tree(delta)."""
         
     def draw(self):
         """Adds this surface and the surfaces of child nodes to the screen"""
-        if self.freed:
+        if self.freed or not self.visible:
             return
 
         if self.surface is not None and self.screen is not None:
@@ -251,7 +252,6 @@ Called prior to .exit_tree(delta)."""
         for child in process_node.children:
             if child.visible:
                 child.draw()
-                self.draw_children(child)
 
     def is_valid(self) -> bool:
         """Returns True if node has not been freed"""
@@ -281,7 +281,7 @@ Target - Will search for the node named Target in the children of the current no
             
         return None
     
-    def get_nodes(self, condition) -> list["Node"]:
+    def get_nodes(self, condition: typing.Callable[["Node"], bool]) -> list["Node"]:
         """Returns a node or None based on the supplied condition. condition accepts 1 parameter, that is the Node it is evaluating.
 
 The condition should return a bool corrisponding to if the node matches the condition or not."""

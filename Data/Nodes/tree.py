@@ -7,8 +7,8 @@ class Tree(Node):
     def __init__(self):
         super().__init__()
         self.name = "Tree"
-        self.on_enter_tree: list[typing.Any] = []
-        self.on_exit_tree: list[typing.Any] = []
+        self.on_enter_tree: list[typing.Callable[[Node], None]] = []
+        self.on_exit_tree: list[typing.Callable[[Node], None]] = []
 
         self.event_queue: list[QueuedEvent] = []
 

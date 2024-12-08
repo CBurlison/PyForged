@@ -34,8 +34,8 @@ class Button(Sprite):
 
         self.node_factory: NodeFactory = node_factory
 
-        self.pressed_events: list[typing.Any] = []
-        self.held_events: list[typing.Any] = []
+        self.pressed_events: list[typing.Callable[["Button"], None]] = []
+        self.held_events: list[typing.Callable[["Button"], None]] = []
 
     def setup(self):
         super().setup()

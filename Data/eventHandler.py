@@ -42,7 +42,7 @@ class MappedInput:
         return NotImplemented
     
 class MouseClickEvent:
-    def __init__(self, control: typing.Any, button: int, input_time: InputTime, click_event):
+    def __init__(self, control: typing.Any, button: int, input_time: InputTime, click_event: typing.Callable[[], bool]):
         self.id: uuid.UUID = uuid.uuid4()
         self.control = control
         self.button = button
@@ -50,26 +50,26 @@ class MouseClickEvent:
         self.click_event = click_event
     
 class MouseMoveEvent:
-    def __init__(self, control: typing.Any, move_event):
+    def __init__(self, control: typing.Any, move_event: typing.Callable[[], bool]):
         self.id: uuid.UUID = uuid.uuid4()
         self.control = control
         self.move_event = move_event
     
 class MovementEvent:
-    def __init__(self, control: typing.Any, move_event):
+    def __init__(self, control: typing.Any, move_event: typing.Callable[[], bool]):
         self.id: uuid.UUID = uuid.uuid4()
         self.control = control
         self.move_event = move_event
     
 class CustomEvent:
-    def __init__(self, control: typing.Any, event_id: int, custom_event):
+    def __init__(self, control: typing.Any, event_id: int, custom_event: typing.Callable[[], bool]):
         self.id: uuid.UUID = uuid.uuid4()
         self.control = control
         self.event_id = event_id
         self.custom_event = custom_event
     
 class KeyPresskEvent:
-    def __init__(self, control: typing.Any, input_id: uuid.UUID, input_time: InputTime, press_event):
+    def __init__(self, control: typing.Any, input_id: uuid.UUID, input_time: InputTime, press_event: typing.Callable[[], bool]):
         self.id: uuid.UUID = uuid.uuid4()
         self.control = control
         self.input_id = input_id
@@ -101,10 +101,10 @@ class EventHandler:
         self.build_button_groups: bool = True
         self.button_groups: dict[str, list[typing.Any]] = {}
 
-        self.update_button_groups_func = None
+        self.update_button_groups_func: typing.Callable[[], None] = None
 
     # key press events
-    def add_key_press_event(self, control, input_key: MappedInput, input_time: InputTime, input_event) -> KeyPresskEvent:
+    def add_key_press_event(self, control, input_key: MappedInput, input_time: InputTime, input_event: typing.Callable[[], bool]) -> KeyPresskEvent:
         new_id = self.__map_input(input_key)
         new_event = KeyPresskEvent(control, new_id, input_time, input_event)
         DictHelper.insert_2(self.__key_events, 0, new_id, input_time, new_event)
@@ -118,7 +118,7 @@ class EventHandler:
         DictHelper.remove_list_2(self.__key_events, input_event.input_id, input_event.input_time, input_event)
 
     # custom events
-    def add_custom_event(self, control, event_id: int, custom_event) -> CustomEvent:
+    def add_custom_event(self, control, event_id: int, custom_event: typing.Callable[[], bool]) -> CustomEvent:
         new_event = CustomEvent(control, event_id, custom_event)
         DictHelper.insert(self.__custom_events, 0, event_id, new_event)
         control.custom_event_storage[new_event.id] = new_event
@@ -131,7 +131,7 @@ class EventHandler:
         DictHelper.remove_list(self.__custom_events, custom_event.event_id, custom_event.custom_event)
 
     # mouse motion events
-    def add_mouse_motion_event(self, control, input_event) -> MouseMoveEvent:
+    def add_mouse_motion_event(self, control, input_event: typing.Callable[[], bool]) -> MouseMoveEvent:
         new_event = MouseMoveEvent(control, input_event)
         self.__mouse_motion_events.insert(0, new_event)
         control.mouse_move_event_storage[new_event.id] = new_event
@@ -145,7 +145,7 @@ class EventHandler:
             self.__mouse_motion_events.remove(input_event)
 
     # movement events
-    def add_movement_event(self, control, input_event) -> MovementEvent:
+    def add_movement_event(self, control, input_event: typing.Callable[[], bool]) -> MovementEvent:
         new_event = MovementEvent(control, input_event)
         self.__movement_events.insert(0, new_event)
         control.movement_event_storage[new_event.id] = new_event
@@ -159,7 +159,7 @@ class EventHandler:
             self.__movement_events.remove(input_event)
 
     # mouse button events
-    def add_mousebutton_event(self, control, input_key: int, input_time: InputTime, input_event) -> MouseClickEvent:
+    def add_mousebutton_event(self, control, input_key: int, input_time: InputTime, input_event: typing.Callable[[], bool]) -> MouseClickEvent:
         new_event = MouseClickEvent(control, input_key, input_time, input_event)
         DictHelper.insert_2(self.__mouse_button_events, 0, input_key, input_time, new_event)
         control.mouse_click_event_storage[new_event.id] = new_event
