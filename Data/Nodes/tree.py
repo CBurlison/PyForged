@@ -30,12 +30,13 @@ class Tree(Node):
             ev(removed_node)
 
     def run_queue_events(self):
-        queue = self.event_queue
-        self.event_queue = []
+        while len(self.event_queue) > 0:
+            queue = self.event_queue.copy()
+            self.event_queue = []
 
-        for ev in queue:
-            if ev.caller is None or ev.caller.is_valid():
-                ev.event()
+            for ev in queue:
+                if ev.caller is None or ev.caller.is_valid():
+                    ev.event()
 
     def clear_node_groups(self):
         self.build_groups = True
