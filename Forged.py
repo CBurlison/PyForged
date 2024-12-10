@@ -68,6 +68,8 @@ def main():
     scene_manager: SceneManager = node_factory.locate_node(SceneManager)
     scene_manager.more_setup()
 
+    di_container.generate_instances()
+
     scene_manager.change_scene(MainMenu)
     game_data: GameState = di_container.locate(GameState)
     

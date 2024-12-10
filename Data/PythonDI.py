@@ -78,6 +78,14 @@ class DIContainer:
                 all.append(self.locate(item.base_type, params))
 
         return all
+    
+    def generate_instances(self):
+        """locate all registered instances that do not have values"""
+        for key in self.__type_instances:
+            value = self.__type_instances[key]
+
+            if value is None:
+                self.__type_instances[key] = self.__inner_locate(key)
 
     def __inner_locate(self, object_type: type, params=[]) -> typing.Any:
         """private: construct a new object"""
