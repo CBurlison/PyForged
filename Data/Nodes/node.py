@@ -150,7 +150,7 @@ Called prior to .exit_tree(delta)."""
         
         self.queue_action(self.free)
 
-    def queue_action(self, action):
+    def queue_action(self, action: typing.Callable[[], None]):
         """Queue an action to be run at the end of the current frame."""
         self.game_tree.event_queue.append(QueuedEvent(self, action))
 

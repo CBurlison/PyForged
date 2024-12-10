@@ -50,6 +50,10 @@ class Tree(Node):
         
         return []
 
+    def queue_action(self, action: typing.Callable[[], None]):
+        """Queue an action that is not associated with a node to be run at the end of the current frame."""
+        self.event_queue.append(QueuedEvent(None, action))
+
     def update_node_groups(self):
         if not self.build_groups:
             return

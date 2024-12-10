@@ -1,4 +1,6 @@
+from typing import Callable
+
 class QueuedEvent:
-    def __init__(self, caller, event):
+    def __init__(self, caller, event: Callable[[], None]):
         self.caller = caller
-        self.event = event
+        self.event: Callable[[], None] = event
