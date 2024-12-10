@@ -364,7 +364,7 @@ The condition should return a bool corrisponding to if the node matches the cond
     
     def get_nodes_by_group(self, group: str) -> list["Node"]:
         """When run in the tree returns all nodes in the given group."""
-        return []
+        return self.game_tree.get_nodes_by_group(group)
 
     def update_node_groups(self):
         """Rebuilds the collection of node groups."""
